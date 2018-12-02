@@ -17,4 +17,23 @@ The biggest advantage of this approach is that your Rendering Engineers can defi
 If enumerations must be modified someday, it would affect the settings from all existing instances of the scriptable objects.
 
 #### Is there any other way to restore scene lighting information
-If you are using some kind of version control software, if you have set the mode of Asset Serialization to Force Text, and if you are only making small commits, then you should be able to restore scene lighting information from the past. But it can become very expensive. Restoring an old state of a scene will also affect the scene graph. More likely you only want to reset the lighting information. In this case you must open the .unity file inside a text editor and search for specific keywords manually. Unfortunately, the names of entries inside this file differ from the fields, being presented within the scene lighting tab. Either way this workflow is very expensive.
+If you are using some kind of version control software, if you have set the mode of Asset Serialization to Force Text, and if you are only making small commits, then you should be able to restore scene lighting information from the past. But it can become very expensive. Restoring an old state of a scene will also affect the scene graph. More likely you only want to reset the lighting information. In this case you must open the .unity file inside a text editor and search for specific keywords manually. Unfortunately, the names of entries inside this file differ from the fields, being presented within the scene lighting tab (see image and codeblock below). Either way this workflow is very expensive.
+
+The image shows that a checkbox was set to false.
+
+![Image shows some lightmapping settings](https://github.com/essentialpackages/lighting-editor/blob/master/resources/lightmapping_settings.png)
+
+The codeblock shows which entry inside the .unity file has changed.
+```
+@@ -81,7 +81,7 @@ LightmapSettings:
+     m_PVRFilterTypeIndirect: 0
+     m_PVRFilterTypeAO: 0
+     m_PVRFilteringMode: 1
+-    m_PVRCulling: 1
++    m_PVRCulling: 0
+     m_PVRFilteringGaussRadiusDirect: 1
+     m_PVRFilteringGaussRadiusIndirect: 5
+     m_PVRFilteringGaussRadiusAO: 2
+
+```
+Without deep knowledge or analyzing decompiled scripts from Unity it will be very frustrating to manually restore lighting information.

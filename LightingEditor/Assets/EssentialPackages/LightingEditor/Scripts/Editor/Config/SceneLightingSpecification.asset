@@ -24,3 +24,39 @@ MonoBehaviour:
       _compression: Auto
       _intensityMultiplier: 1
       _bounces: 1
+  _realtimeLighting:
+    _realtimeGlobalIllumination: 0
+  _mixedLighting:
+    _bakedGlobalIllumination: 1
+    _lightingMode: Shadowmask
+  _lightmappingSettings:
+    _lightmapper:
+      _lightMapper: Progressive
+      _prioritizeView: 1
+      _directSamples: 32
+      _indirectSamples: 256
+      _bounces: 2
+      _filtering: Auto
+    _indirectResolution: 2
+    _lightmapResolution: 10
+    _lightmapPadding: 2
+    _lightmapSize: 512
+    _compressLightmaps: 1
+    _ambientOcclusion: 0
+    _directionalMode: Directional
+    _indirectIntensity: 1
+    _albedoBoost: 1
+    _lightmapParameters: Default-Medium
+  _otherSettings:
+    _fog: 0
+    _haloTexture: {fileID: 0}
+    _haloStrength: 0.5
+    _flareFadeSpeed: 3
+    _flareFadeStrength: 1
+    _spotCookie: None
+  _debugSettings:
+    _lightProbeVisualization:
+      _dropdownMenu: Only Probes Used By Selection
+      _displayWeights: 1
+      _displayOcclusion: 1
+    _autoGenerate: 1

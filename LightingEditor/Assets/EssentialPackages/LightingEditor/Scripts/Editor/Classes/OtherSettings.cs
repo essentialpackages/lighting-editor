@@ -16,8 +16,9 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
 		[SerializeField] private float _flareFadeSpeed = 3.0f;
 		[Range(0.0f, 1.0f)]
 		[SerializeField] private float _flareFadeStrength = 1.0f;
-		[Tooltip("When 'None' is selected, Unity will automatically use 'Soft' as default cookie")]
-		[SerializeField] private string _spotCookie = "None";
+		[Tooltip("When cookie is null, Unity will automatically use 'Soft' as default cookie")]
+		//[SerializeField] private string _spotCookie = "None";
+		[SerializeField] private Texture2D _spotCookie;
 
 #endif
 

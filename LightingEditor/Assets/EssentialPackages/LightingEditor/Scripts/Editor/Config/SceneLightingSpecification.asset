@@ -17,10 +17,23 @@ MonoBehaviour:
     _environmentLighting:
       _source: Skybox
       _intensityMultiplier: 1
+      _skyColor:
+        serializedVersion: 2
+        rgba: 4282530358
+      _equatorColor:
+        serializedVersion: 2
+        rgba: 4280426525
+      _groundColor:
+        serializedVersion: 2
+        rgba: 4278782732
+      _ambientColor:
+        serializedVersion: 2
+        rgba: 4282530358
       _ambientMode: Baked
     _environmentReflections:
       _source: Skybox
       _resolution: 128
+      _cubemap: {fileID: 0}
       _compression: Auto
       _intensityMultiplier: 1
       _bounces: 1
@@ -29,6 +42,7 @@ MonoBehaviour:
   _mixedLighting:
     _bakedGlobalIllumination: 1
     _lightingMode: Shadowmask
+    _realtimeShadowColor: {r: 107, g: 122, b: 160, a: 255}
   _lightmappingSettings:
     _lightmapper:
       _lightMapper: Progressive
@@ -37,12 +51,24 @@ MonoBehaviour:
       _indirectSamples: 256
       _bounces: 2
       _filtering: Auto
+      _directFilter: Gaussian
+      _directRadius: 0
+      _directSigma: 0.5
+      _indirectFilter: Gaussian
+      _indirectRadius: 5
+      _indirectSigma: 2
+      _ambientOcclusionFilter: Gaussian
+      _ambientOcclusionRadius: 2
+      _ambientOcclusionSigma: 1
     _indirectResolution: 2
     _lightmapResolution: 10
     _lightmapPadding: 2
     _lightmapSize: 512
     _compressLightmaps: 1
     _ambientOcclusion: 0
+    _maxDistance: 1
+    _indirectContribution: 1
+    _directContribution: 0
     _directionalMode: Directional
     _indirectIntensity: 1
     _albedoBoost: 1

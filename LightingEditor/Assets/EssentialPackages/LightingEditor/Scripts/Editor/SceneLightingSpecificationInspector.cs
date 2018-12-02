@@ -15,6 +15,9 @@ namespace EssentialPackages.LightingEditor.Editor
     {
         private SceneLightingSpecification TargetScript { get; set; }
         
+        private bool DisableAmbientMode { get; set; }
+        private bool AmbientMode { get; set; }
+        
         private void OnEnable()
         {
             TargetScript = (SceneLightingSpecification) target;
@@ -31,6 +34,9 @@ namespace EssentialPackages.LightingEditor.Editor
             var otherSettings = serializedObject.FindProperty("_otherSettings");
             var debugSettings = serializedObject.FindProperty("_debugSettings");
 
+            DisableAmbientMode = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue
+                                 != mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
+
             DrawEnvironmentGroup(environment);
             DrawRealtimeLightingGroup(realtimeLighting);
             DrawMixedLightingGroup(mixedLighting);
@@ -41,7 +47,7 @@ namespace EssentialPackages.LightingEditor.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private static void DrawEnvironmentGroup(SerializedProperty serializedProperty)
+        private void DrawEnvironmentGroup(SerializedProperty serializedProperty)
         {
             var environmentLighting = serializedProperty.FindPropertyRelative("_environmentLighting");
             var environmentReflections = serializedProperty.FindPropertyRelative("_environmentReflections");
@@ -84,33 +90,27 @@ namespace EssentialPackages.LightingEditor.Editor
             switch (source.stringValue)
             {
                 case "Skybox":
-                {
                     addFieldsForSkybox();
                     break;
-                }
                 case "Gradient":
-                {
                     addFieldsForGradient();
                     break;
-                }
                 case "Color":
-                {
                     addFieldsForColor();
                     break;
-                }
                 default:
-                {
                     addFieldsForSkybox();
                     addFieldsForGradient();
                     addFieldsForColor();
                     break;
-                }
             }
-            
+
+            EditorGUI.BeginDisabledGroup(DisableAmbientMode);
             Inspector.DrawPopupGroup(
                 environmentLighting.FindPropertyRelative("_ambientMode"),
                 new [] {"Realtime", "Baked"}
             );
+            EditorGUI.EndDisabledGroup();
             
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
@@ -123,14 +123,32 @@ namespace EssentialPackages.LightingEditor.Editor
                 source,
                 new [] {"Skybox", "Custom"}
             );
+            
+            Action addFieldsForSkyboxNo2 = () => {
+                Inspector.DrawPopupGroup(
+                    environmentReflections.FindPropertyRelative("_resolution"),
+                    new [] {"16", "32", "64", "128", "256", "512", "1024", "2048"}
+                );
+            };
+            
+            Action addFieldsForCustom = () => {
+                Inspector.DrawPropertyField(environmentReflections.FindPropertyRelative("_cubemap"));
+            };
+            
             switch (source.stringValue)
             {
+                case "Skybox":
+                    addFieldsForSkyboxNo2();
+                    break;
+                case "Custom":
+                    addFieldsForCustom();
+                    break;
+                default:
+                    addFieldsForSkyboxNo2();
+                    addFieldsForCustom();
+                    break;
             }
 
-            Inspector.DrawPopupGroup(
-                environmentReflections.FindPropertyRelative("_resolution"),
-                new [] {"16", "32", "64", "128", "256", "512", "1024", "2048"}
-            );
             Inspector.DrawPopupGroup(
                 environmentReflections.FindPropertyRelative("_compression"),
                 new [] {"Uncompressed", "Compressed", "Auto"}

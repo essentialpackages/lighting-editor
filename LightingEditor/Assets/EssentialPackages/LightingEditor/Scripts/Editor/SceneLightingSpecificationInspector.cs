@@ -187,9 +187,11 @@ namespace EssentialPackages.LightingEditor.Editor
                 ObjectNames.NicifyVariableName(property.name),
                 EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            
-            Inspector.DrawCheckbox(property.FindPropertyRelative("_bakedGlobalIllumination"));
 
+            var bakedGlobalIllumination = property.FindPropertyRelative("_bakedGlobalIllumination");
+            Inspector.DrawCheckbox(bakedGlobalIllumination);
+
+            EditorGUI.BeginDisabledGroup(!bakedGlobalIllumination.boolValue);
             var lightingMode = property.FindPropertyRelative("_lightingMode");
             Inspector.DrawPopupGroup(
                 lightingMode,
@@ -200,6 +202,7 @@ namespace EssentialPackages.LightingEditor.Editor
             {
                 Inspector.DrawPropertyField(property.FindPropertyRelative("_realtimeShadowColor"));
             }
+            EditorGUI.EndDisabledGroup();
             
             EditorGUI.indentLevel = 0;
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

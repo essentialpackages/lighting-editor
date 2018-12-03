@@ -79,7 +79,7 @@ MonoBehaviour:
     _haloStrength: 0.5
     _flareFadeSpeed: 3
     _flareFadeStrength: 1
-    _spotCookie: None
+    _spotCookie: {fileID: 0}
   _debugSettings:
     _lightProbeVisualization:
       _dropdownMenu: Only Probes Used By Selection

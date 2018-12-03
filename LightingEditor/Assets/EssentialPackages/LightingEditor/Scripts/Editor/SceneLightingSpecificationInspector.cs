@@ -189,11 +189,17 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUI.indentLevel++;
             
             Inspector.DrawCheckbox(property.FindPropertyRelative("_bakedGlobalIllumination"));
-            
+
+            var lightingMode = property.FindPropertyRelative("_lightingMode");
             Inspector.DrawPopupGroup(
-                property.FindPropertyRelative("_lightingMode"),
+                lightingMode,
                 new [] {"Baked Indirect", "Subtractive", "Shadowmask"}
             );
+
+            if (lightingMode.stringValue == "Subtractive")
+            {
+                Inspector.DrawPropertyField(property.FindPropertyRelative("_realtimeShadowColor"));
+            }
             
             EditorGUI.indentLevel = 0;
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

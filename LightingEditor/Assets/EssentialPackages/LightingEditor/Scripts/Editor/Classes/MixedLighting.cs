@@ -15,7 +15,7 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
 
         [Tooltip("Only active when Baked Global Illumination is active and Lighting Mode is set to Subtractive")]
         [SerializeField]
-        private Color _realtimeShadowColor = new Color(107, 122, 160, 255);
+        private Color _realtimeShadowColor = new Color32(107, 122, 160, 255);
 
 #endif
 

@@ -277,8 +277,51 @@ namespace EssentialPackages.LightingEditor.Editor
                 ObjectNames.NicifyVariableName(property.name),
                 EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
+
+            var fog = property.FindPropertyRelative("_fog");
+            Inspector.DrawCheckbox(fog);
+
+            if (fog.boolValue)
+            {
+                EditorGUI.indentLevel++;
+                Inspector.DrawPropertyField(property.FindPropertyRelative("_color"));
+
+                var mode = property.FindPropertyRelative("_mode");
+                Inspector.DrawPopupGroup(
+                    mode,
+                    new [] {"Linear", "Exponential", "Exponential Squared"}
+                );
+
+                Action addFieldsForLinearMode = () => {
+                    Inspector.DrawFloatField(property.FindPropertyRelative("_start"));
+                    Inspector.DrawFloatField(property.FindPropertyRelative("_end"));
+                };
+
+                Action addFieldsForExponentialMode = () =>
+                {
+                    Inspector.DrawFloatField(property.FindPropertyRelative("_density"));
+                };
+
+                switch (mode.stringValue)
+                {
+                    case  "Linear":
+                        addFieldsForLinearMode();
+                        break;
+                    case  "Exponential":
+                        addFieldsForExponentialMode();
+                        break;
+                    case  "Exponential Squared":
+                        addFieldsForExponentialMode();
+                        break;
+                    default:
+                        addFieldsForLinearMode();
+                        addFieldsForExponentialMode();
+                        break;
+                }
+                
+                EditorGUI.indentLevel--;
+            }
             
-            Inspector.DrawCheckbox(property.FindPropertyRelative("_fog"));
             Inspector.DrawPropertyField(property.FindPropertyRelative("_haloTexture"));
             Inspector.DrawFloatSlider(
                 property.FindPropertyRelative("_haloStrength"),

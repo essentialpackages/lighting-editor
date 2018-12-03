@@ -40,9 +40,9 @@ MonoBehaviour:
   _realtimeLighting:
     _realtimeGlobalIllumination: 0
   _mixedLighting:
-    _bakedGlobalIllumination: 1
-    _lightingMode: Shadowmask
-    _realtimeShadowColor: {r: 107, g: 122, b: 160, a: 255}
+    _bakedGlobalIllumination: 0
+    _lightingMode: Baked Indirect
+    _realtimeShadowColor: {r: 0.41960788, g: 0.4784314, b: 0.627451, a: 1}
   _lightmappingSettings:
     _lightmapper:
       _lightMapper: Progressive
@@ -74,7 +74,12 @@ MonoBehaviour:
     _albedoBoost: 1
     _lightmapParameters: Default-Medium
   _otherSettings:
-    _fog: 0
+    _fog: 1
+    _color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    _mode: Exponential Squared
+    _start: 0
+    _end: 300
+    _density: 0.01
     _haloTexture: {fileID: 0}
     _haloStrength: 0.5
     _flareFadeSpeed: 3

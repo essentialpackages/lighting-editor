@@ -24,7 +24,7 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
 
         [Tooltip("Only active when Filtering is set to Advanced and Direct Filter is set to Gaussian")]
         [Range(0, 5)]
-        [SerializeField] private int _directRadius;
+        [SerializeField] private int _directRadius = 1;
 
         [Tooltip("Only active when Filtering is set to Advanced and Direct Filter is set to A-Torus")]
         [Range(0.0f, 2.0f)]

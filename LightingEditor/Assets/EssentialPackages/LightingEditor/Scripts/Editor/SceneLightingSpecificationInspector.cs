@@ -232,11 +232,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             var lightMapper = property.FindPropertyRelative("_lightmapper");
 
-            var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
-            Inspector.DrawPopupGroup(
-                lightmapper,
-                new [] {"Enlighten", "Progressive"}
-            );
+            
 
             var ambientOcclusion = property.FindPropertyRelative("_ambientOcclusion");
 
@@ -401,6 +397,14 @@ namespace EssentialPackages.LightingEditor.Editor
                 EditorGUILayout.Space();
             };
 
+            EditorGUI.BeginDisabledGroup(!BakedEnabled);
+            
+            var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
+            Inspector.DrawPopupGroup(
+                lightmapper,
+                new [] {"Enlighten", "Progressive"}
+            );
+            
             switch (lightmapper.stringValue)
             {
                 case "Enlighten":
@@ -412,10 +416,13 @@ namespace EssentialPackages.LightingEditor.Editor
                     drawExtraFields();
                     break;    
             }
+            EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!RealtimeEnabled);
             Inspector.DrawIntField(property.FindPropertyRelative("_indirectResolution"));
             EditorGUI.EndDisabledGroup();
+            
+            EditorGUI.BeginDisabledGroup(!BakedEnabled);
             Inspector.DrawFloatField(property.FindPropertyRelative("_lightmapResolution"));
             Inspector.DrawIntField(property.FindPropertyRelative("_lightmapPadding"));
             Inspector.DrawPopupGroup(
@@ -424,6 +431,9 @@ namespace EssentialPackages.LightingEditor.Editor
             );
             Inspector.DrawCheckbox(property.FindPropertyRelative("_compressLightmaps"));
             Inspector.DrawCheckbox(ambientOcclusion);
+            EditorGUI.EndDisabledGroup();
+            
+            EditorGUI.BeginDisabledGroup(!RealtimeEnabled && !BakedEnabled);
             Inspector.DrawPopupGroup(
                 property.FindPropertyRelative("_directionalMode"),
                 new [] {"Non-Directional", "Directional"}
@@ -442,6 +452,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 property.FindPropertyRelative("_lightmapParameters"),
                 new [] {"Default-Medium", "Default-HighResolution", "Default-LowResolution", "Default-VeryLowResolution", "Create New ..."}
             );
+            EditorGUI.EndDisabledGroup();
             
             EditorGUI.indentLevel = 0;
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

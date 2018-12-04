@@ -22,6 +22,13 @@ namespace EssentialPackages.LightingEditor.Editor
         private void OnEnable()
         {
             TargetScript = (SceneLightingSpecification) target;
+            
+            var environment = serializedObject.FindProperty("_environment");
+            var skyboxMaterial = environment.FindPropertyRelative("_skyboxMaterial");
+            if (skyboxMaterial.objectReferenceValue == null)
+            {
+                skyboxMaterial.objectReferenceValue = RenderSettings.skybox;
+            }
         }
 
         public override void OnInspectorGUI()

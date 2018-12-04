@@ -16,7 +16,8 @@ namespace EssentialPackages.LightingEditor.Editor
         private SceneLightingSpecification TargetScript { get; set; }
         
         private bool DisableAmbientMode { get; set; }
-        private bool AmbientMode { get; set; }
+        private bool RealtimeEnabled { get; set; }
+        private bool BakedEnabled { get; set; }
         
         private void OnEnable()
         {
@@ -34,8 +35,9 @@ namespace EssentialPackages.LightingEditor.Editor
             var otherSettings = serializedObject.FindProperty("_otherSettings");
             var debugSettings = serializedObject.FindProperty("_debugSettings");
 
-            DisableAmbientMode = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue
-                                 != mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
+            RealtimeEnabled = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue;
+            BakedEnabled = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
+                                 
 
             DrawEnvironmentGroup(environment);
             DrawRealtimeLightingGroup(realtimeLighting);
@@ -82,7 +84,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawPropertyField(environmentLighting.FindPropertyRelative("_equatorColor"));
                 Inspector.DrawPropertyField(environmentLighting.FindPropertyRelative("_groundColor"));
             };
-            
+
             Action addFieldsForColor = () => {
                 Inspector.DrawPropertyField(environmentLighting.FindPropertyRelative("_ambientColor"));
             };
@@ -104,13 +106,26 @@ namespace EssentialPackages.LightingEditor.Editor
                     addFieldsForColor();
                     break;
             }
-
-            EditorGUI.BeginDisabledGroup(DisableAmbientMode);
-            Inspector.DrawPopupGroup(
-                environmentLighting.FindPropertyRelative("_ambientMode"),
-                new [] {"Realtime", "Baked"}
-            );
-            EditorGUI.EndDisabledGroup();
+            
+            if (RealtimeEnabled || BakedEnabled)
+            {
+                var ambientMode = environmentLighting.FindPropertyRelative("_ambientMode");
+                if (RealtimeEnabled && !BakedEnabled)
+                {
+                    ambientMode.stringValue = "Realtime";
+                }
+                else if (!RealtimeEnabled && BakedEnabled)
+                {
+                    ambientMode.stringValue = "Baked";
+                }
+            
+                EditorGUI.BeginDisabledGroup(!RealtimeEnabled || !BakedEnabled);
+                Inspector.DrawPopupGroup(
+                    ambientMode,
+                    new [] {"Realtime", "Baked"}
+                );
+                EditorGUI.EndDisabledGroup();
+            }
             
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();

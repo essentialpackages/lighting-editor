@@ -9,7 +9,7 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
 		
 #if UNITY_2018_2_4
 		
-		[SerializeField] private Material _skyboxMaterial;
+		[SerializeField] private Material _skyboxMaterial =  RenderSettings.skybox;
 		[SerializeField] private Light _sunSource;
 		[Space(10)]
 		[SerializeField] private EnvironmentLighting _environmentLighting;

@@ -430,7 +430,26 @@ namespace EssentialPackages.LightingEditor.Editor
                 new [] {"32", "64", "128", "256", "512", "1024", "2048", "4096"}
             );
             Inspector.DrawCheckbox(property.FindPropertyRelative("_compressLightmaps"));
+            
             Inspector.DrawCheckbox(ambientOcclusion);
+
+            if (ambientOcclusion.boolValue)
+            {
+                EditorGUI.indentLevel++;
+                Inspector.DrawFloatField(property.FindPropertyRelative("_maxDistance"));
+                Inspector.DrawFloatSlider(
+                    property.FindPropertyRelative("_indirectContribution"),
+                    0.0f,
+                    10.0f
+                );
+                Inspector.DrawFloatSlider(
+                    property.FindPropertyRelative("_directContribution"),
+                    0.0f,
+                    10.0f
+                );
+                EditorGUI.indentLevel--;
+            }
+
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!RealtimeEnabled && !BakedEnabled);

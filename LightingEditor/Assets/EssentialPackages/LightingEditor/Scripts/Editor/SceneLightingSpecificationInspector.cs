@@ -191,21 +191,19 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private static void DrawMixedLightingGroup(SerializedProperty property)
         {
+            var bakedGlobalIllumination = property.FindPropertyRelative("_bakedGlobalIllumination");
+            var lightingMode = property.FindPropertyRelative("_lightingMode");
+            var realtimeShadowColor = property.FindPropertyRelative("_realtimeShadowColor");
+            
             BeginGroup(property.name);
 
-            var bakedGlobalIllumination = property.FindPropertyRelative("_bakedGlobalIllumination");
             Inspector.DrawCheckbox(bakedGlobalIllumination);
 
             EditorGUI.BeginDisabledGroup(!bakedGlobalIllumination.boolValue);
-            var lightingMode = property.FindPropertyRelative("_lightingMode");
-            Inspector.DrawPopupGroup(
-                lightingMode,
-                new [] {"Baked Indirect", "Subtractive", "Shadowmask"}
-            );
-
+            Inspector.DrawPopupGroup(lightingMode, new [] {"Baked Indirect", "Subtractive", "Shadowmask"});
             if (lightingMode.stringValue == "Subtractive")
             {
-                Inspector.DrawPropertyField(property.FindPropertyRelative("_realtimeShadowColor"));
+                Inspector.DrawPropertyField(realtimeShadowColor);
             }
             EditorGUI.EndDisabledGroup();
 

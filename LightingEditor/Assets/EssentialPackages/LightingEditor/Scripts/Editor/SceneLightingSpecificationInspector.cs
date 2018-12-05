@@ -212,58 +212,85 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private void DrawLightmappingSettings(SerializedProperty property)
         {
-            BeginGroup(property.name);
-
             var lightMapper = property.FindPropertyRelative("_lightmapper");
+            var ambientOcclusion = property.FindPropertyRelative("_ambientOcclusion");
+            var finalGather = property.FindPropertyRelative("_finalGather");
+            var prioritizeView = lightMapper.FindPropertyRelative("_prioritizeView");
+            var directSamples = lightMapper.FindPropertyRelative("_directSamples");
+            var indirectSamples = lightMapper.FindPropertyRelative("_indirectSamples");
+            var bounces = lightMapper.FindPropertyRelative("_bounces");
+            var filtering = lightMapper.FindPropertyRelative("_filtering");
+            var directFilter = lightMapper.FindPropertyRelative("_directFilter");
+            var directRadius = lightMapper.FindPropertyRelative("_directRadius");
+            var directSigma = lightMapper.FindPropertyRelative("_directSigma");
+            var indirectRadius = lightMapper.FindPropertyRelative("_indirectRadius");
+            var indirectSigma = lightMapper.FindPropertyRelative("_indirectSigma");
+            var indirectFilter = lightMapper.FindPropertyRelative("_indirectFilter");
+            var ambientOcclusionRadius = lightMapper.FindPropertyRelative("_ambientOcclusionRadius");
+            var ambientOcclusionSigma = lightMapper.FindPropertyRelative("_ambientOcclusionSigma");
+            var ambientOcclusionFilter = lightMapper.FindPropertyRelative("_ambientOcclusionFilter");
+            var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
+            var indirectResolution = property.FindPropertyRelative("_indirectResolution");
+            var lightmapResolution = property.FindPropertyRelative("_lightmapResolution");
+            var lightmapPadding = property.FindPropertyRelative("_lightmapPadding");
+            var lightmapSize = property.FindPropertyRelative("_lightmapSize");
+            var compressLightmaps = property.FindPropertyRelative("_compressLightmaps");
+            var maxDistance = property.FindPropertyRelative("_maxDistance");
+            var indirectContribution = property.FindPropertyRelative("_indirectContribution");
+            var directContribution = property.FindPropertyRelative("_directContribution");
+            var directionalMode = property.FindPropertyRelative("_directionalMode");
+            var indirectIntensity = property.FindPropertyRelative("_indirectIntensity");
+            var albedoBoost = property.FindPropertyRelative("_albedoBoost");
+            var lightmapParameters = property.FindPropertyRelative("_lightmapParameters");
+            
+            BeginGroup(property.name);
 
             
 
-            var ambientOcclusion = property.FindPropertyRelative("_ambientOcclusion");
+            Action drawDirectRadius = () =>
+            {
+                Inspector.DrawIntSlider(directRadius, 0, 5);
+            };
+
+            Action drawDirectSigma = () =>
+            {
+                Inspector.DrawFloatSlider(directSigma, 0.0f, 2.0f);
+            };
+                
+            Action drawIndirectRadius = () =>
+            {
+                Inspector.DrawIntSlider(indirectRadius, 0, 5);
+            };
+                    
+            Action drawInirectSigma = () =>
+            {
+                Inspector.DrawFloatSlider(indirectSigma, 0.0f, 2.0f);
+            };
+            
+            Action drawAmbientOcclusionRadius = () =>
+            {
+                Inspector.DrawIntSlider(ambientOcclusionRadius, 0, 5);
+            };
+                    
+            Action drawAmbientOcclusionSigma = () =>
+            {
+                Inspector.DrawFloatSlider(ambientOcclusionSigma, 0.0f, 2.0f);
+            };
 
             Action drawExtraFields = () =>
             {
                 EditorGUI.indentLevel++;
 
-                Inspector.DrawCheckbox(lightMapper.FindPropertyRelative("_prioritizeView"));
-                Inspector.DrawIntField(lightMapper.FindPropertyRelative("_directSamples"));
-                Inspector.DrawIntField(lightMapper.FindPropertyRelative("_indirectSamples"));
-                Inspector.DrawPopupGroup(
-                    lightMapper.FindPropertyRelative("_bounces"),
-                    new[] {"None", "1", "2", "3", "4"}
-                );
-
-                var filtering = lightMapper.FindPropertyRelative("_filtering");
-                Inspector.DrawPopupGroup(
-                    filtering,
-                    new[] {"None", "Auto", "Advanced"}
-                );
+                Inspector.DrawCheckbox(prioritizeView);
+                Inspector.DrawIntField(directSamples);
+                Inspector.DrawIntField(indirectSamples);
+                Inspector.DrawPopupGroup(bounces, new[] {"None", "1", "2", "3", "4"});
+                Inspector.DrawPopupGroup(filtering, new[] {"None", "Auto", "Advanced"});
 
                 Action drawAdvancedFilter = () =>
                 {
-                    var directFilter = lightMapper.FindPropertyRelative("_directFilter");
-                    Inspector.DrawPopupGroup(
-                        directFilter,
-                        new[] {"Gaussian", "A-Torus", "None"}
-                    );
+                    Inspector.DrawPopupGroup(directFilter, new[] {"Gaussian", "A-Torus", "None"});
 
-                    Action drawDirectRadius = () =>
-                    {
-                        Inspector.DrawIntSlider(
-                            lightMapper.FindPropertyRelative("_directRadius"),
-                            0,
-                            5
-                        );
-                    };
-
-                    Action drawDirectSigma = () =>
-                    {
-                        Inspector.DrawFloatSlider(
-                            lightMapper.FindPropertyRelative("_directSigma"),
-                            0.0f,
-                            2.0f
-                        );
-                    };
-                    
                     switch (directFilter.stringValue)
                     {
                         case "Gaussian":
@@ -279,30 +306,8 @@ namespace EssentialPackages.LightingEditor.Editor
                             drawDirectSigma();
                             break;
                     }
-                    
-                    Action drawIndirectRadius = () =>
-                    {
-                        Inspector.DrawIntSlider(
-                            lightMapper.FindPropertyRelative("_indirectRadius"),
-                            0,
-                            5
-                        );
-                    };
-                    
-                    Action drawInirectSigma = () =>
-                    {
-                        Inspector.DrawFloatSlider(
-                            lightMapper.FindPropertyRelative("_indirectSigma"),
-                            0.0f,
-                            2.0f
-                        );
-                    };
 
-                    var indirectFilter = lightMapper.FindPropertyRelative("_indirectFilter");
-                    Inspector.DrawPopupGroup(
-                        indirectFilter,
-                        new[] {"Gaussian", "A-Torus", "None"}
-                    );
+                    Inspector.DrawPopupGroup(indirectFilter, new[] {"Gaussian", "A-Torus", "None"});
                     
                     switch (indirectFilter.stringValue)
                     {
@@ -319,31 +324,10 @@ namespace EssentialPackages.LightingEditor.Editor
                             drawInirectSigma();
                             break;
                     }
-                    
-                    Action drawAmbientOcclusionRadius = () =>
-                    {
-                        Inspector.DrawIntSlider(
-                            lightMapper.FindPropertyRelative("_ambientOcclusionRadius"),
-                            0,
-                            5
-                        );
-                    };
-                    
-                    Action drawAmbientOcclusionSigma = () =>
-                    {
-                        Inspector.DrawFloatSlider(
-                            lightMapper.FindPropertyRelative("_ambientOcclusionSigma"),
-                            0.0f,
-                            2.0f
-                        );
-                    };
-                    
+
                     EditorGUI.BeginDisabledGroup(!ambientOcclusion.boolValue);
-                    var ambientOcclusionFilter = lightMapper.FindPropertyRelative("_ambientOcclusionFilter");
-                    Inspector.DrawPopupGroup(
-                        ambientOcclusionFilter,
-                        new[] {"Gaussian", "A-Torus", "None"}
-                    );
+                    
+                    Inspector.DrawPopupGroup(ambientOcclusionFilter, new[] {"Gaussian", "A-Torus", "None"});
 
                     switch (ambientOcclusionFilter.stringValue)
                     {
@@ -383,76 +367,49 @@ namespace EssentialPackages.LightingEditor.Editor
 
             EditorGUI.BeginDisabledGroup(!BakedEnabled);
             
-            var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
-            Inspector.DrawPopupGroup(
-                lightmapper,
-                new [] {"Enlighten", "Progressive"}
-            );
             
-            switch (lightmapper.stringValue)
+            Inspector.DrawPopupGroup(lightmapper, new [] {"Enlighten", "Progressive"});
+            
+            if (lightmapper.stringValue != "Enlighten")
             {
-                case "Enlighten":
-                    break;
-                case "Progressive":
-                    drawExtraFields();
-                    break;
-                default:
-                    drawExtraFields();
-                    break;    
+                drawExtraFields();  
             }
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!RealtimeEnabled);
-            Inspector.DrawIntField(property.FindPropertyRelative("_indirectResolution"));
+            Inspector.DrawIntField(indirectResolution);
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!BakedEnabled);
-            Inspector.DrawFloatField(property.FindPropertyRelative("_lightmapResolution"));
-            Inspector.DrawIntField(property.FindPropertyRelative("_lightmapPadding"));
-            Inspector.DrawPopupGroup(
-                property.FindPropertyRelative("_lightmapSize"),
-                new [] {"32", "64", "128", "256", "512", "1024", "2048", "4096"}
-            );
-            Inspector.DrawCheckbox(property.FindPropertyRelative("_compressLightmaps"));
+            Inspector.DrawFloatField(lightmapResolution);
+            Inspector.DrawIntField(lightmapPadding);
+            Inspector.DrawPopupGroup(lightmapSize, new [] {"32", "64", "128", "256", "512", "1024", "2048", "4096"});
+            Inspector.DrawCheckbox(compressLightmaps);
             
             Inspector.DrawCheckbox(ambientOcclusion);
 
             if (ambientOcclusion.boolValue)
             {
                 EditorGUI.indentLevel++;
-                Inspector.DrawFloatField(property.FindPropertyRelative("_maxDistance"));
-                Inspector.DrawFloatSlider(
-                    property.FindPropertyRelative("_indirectContribution"),
-                    0.0f,
-                    10.0f
-                );
-                Inspector.DrawFloatSlider(
-                    property.FindPropertyRelative("_directContribution"),
-                    0.0f,
-                    10.0f
-                );
+                Inspector.DrawFloatField(maxDistance);
+                Inspector.DrawFloatSlider(indirectContribution, 0.0f, 10.0f);
+                Inspector.DrawFloatSlider(directContribution, 0.0f, 10.0f);
                 EditorGUI.indentLevel--;
+            }
+
+            if (lightmapper.stringValue != "Progressive")
+            {
+                Inspector.DrawCheckbox(finalGather);
             }
 
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!RealtimeEnabled && !BakedEnabled);
+            Inspector.DrawPopupGroup(directionalMode, new [] {"Non-Directional", "Directional"});
+            Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
+            Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);
             Inspector.DrawPopupGroup(
-                property.FindPropertyRelative("_directionalMode"),
-                new [] {"Non-Directional", "Directional"}
-            );
-            Inspector.DrawFloatSlider(
-                property.FindPropertyRelative("_indirectIntensity"),
-                0.0f,
-                5.0f
-            );
-            Inspector.DrawFloatSlider(
-                property.FindPropertyRelative("_albedoBoost"),
-                1.0f,
-                10.0f
-            );
-            Inspector.DrawPopupGroup(
-                property.FindPropertyRelative("_lightmapParameters"),
+                lightmapParameters,
                 new [] {"Default-Medium", "Default-HighResolution", "Default-LowResolution", "Default-VeryLowResolution", "Create New ..."}
             );
             EditorGUI.EndDisabledGroup();

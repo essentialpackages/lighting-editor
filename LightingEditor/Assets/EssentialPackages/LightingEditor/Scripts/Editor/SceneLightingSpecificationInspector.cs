@@ -56,15 +56,15 @@ namespace EssentialPackages.LightingEditor.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawEnvironmentGroup(SerializedProperty serializedProperty)
+        private void DrawEnvironmentGroup(SerializedProperty property)
         {
-            var environmentLighting = serializedProperty.FindPropertyRelative("_environmentLighting");
-            var environmentReflections = serializedProperty.FindPropertyRelative("_environmentReflections");
+            var environmentLighting = property.FindPropertyRelative("_environmentLighting");
+            var environmentReflections = property.FindPropertyRelative("_environmentReflections");
 
-            BeginGroup(serializedProperty.name);
+            BeginGroup(property.name);
             
-            Inspector.DrawPropertyField(serializedProperty.FindPropertyRelative("_skyboxMaterial"));
-            Inspector.DrawPropertyField(serializedProperty.FindPropertyRelative("_sunSource"));
+            Inspector.DrawPropertyField(property.FindPropertyRelative("_skyboxMaterial"));
+            Inspector.DrawPropertyField(property.FindPropertyRelative("_sunSource"));
             
             EditorGUILayout.Space();
             

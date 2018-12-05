@@ -484,27 +484,30 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private static void DrawDebugSettings(SerializedProperty property)
         {
+            var lightProbeVisualization = property.FindPropertyRelative("_lightProbeVisualization");
+            var dropdownMenu = lightProbeVisualization.FindPropertyRelative("_dropdownMenu");
+            var displayWeights = lightProbeVisualization.FindPropertyRelative("_displayWeights");
+            var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
+            var autoGenerate = property.FindPropertyRelative("_autoGenerate");
+            
             BeginGroup(property.name);
             
-            var lightProbeVisualization = property.FindPropertyRelative("_lightProbeVisualization");
-            
-            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(lightProbeVisualization.name));
-            EditorGUI.indentLevel++;
+            DrawSubHeader(lightProbeVisualization.name);
 
             Inspector.DrawPopupGroup(
-                lightProbeVisualization.FindPropertyRelative("_dropdownMenu"),
+                dropdownMenu,
                 new []{"Only Probes Used By Selection", "All Probes No Cells", "All Probes With Cells", "None"},
                 false
             );
-            Inspector.DrawCheckbox(lightProbeVisualization.FindPropertyRelative("_displayWeights"));
-            Inspector.DrawCheckbox(lightProbeVisualization.FindPropertyRelative("_displayOcclusion"));
+            Inspector.DrawCheckbox(displayWeights);
+            Inspector.DrawCheckbox(displayOcclusion);
 
             EditorGUI.indentLevel--;
             
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             
-            Inspector.DrawCheckbox(property.FindPropertyRelative("_autoGenerate"));
+            Inspector.DrawCheckbox(autoGenerate);
         }
 
         private static void BeginGroup(string header)

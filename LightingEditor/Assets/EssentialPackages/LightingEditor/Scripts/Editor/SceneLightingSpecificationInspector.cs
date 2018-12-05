@@ -245,8 +245,6 @@ namespace EssentialPackages.LightingEditor.Editor
             
             BeginGroup(property.name);
 
-            
-
             Action drawDirectRadius = () =>
             {
                 Inspector.DrawIntSlider(directRadius, 0, 5);
@@ -419,31 +417,41 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private static void DrawOtherSettings(SerializedProperty property)
         {
+            var fog = property.FindPropertyRelative("_fog");
+            var color = property.FindPropertyRelative("_color");
+            var mode = property.FindPropertyRelative("_mode");
+            var start = property.FindPropertyRelative("_start");
+            var end = property.FindPropertyRelative("_end");
+            var density = property.FindPropertyRelative("_density");
+            var haloTexture = property.FindPropertyRelative("_haloTexture");
+            var haloStrength = property.FindPropertyRelative("_haloStrength");
+            var flareFadeSpeed = property.FindPropertyRelative("_flareFadeSpeed");
+            var flareFadeStrength = property.FindPropertyRelative("_flareFadeStrength");
+            var spotCookie = property.FindPropertyRelative("_spotCookie");
+            
+            Action addFieldsForLinearMode = () => {
+                Inspector.DrawFloatField(start);
+                Inspector.DrawFloatField(end);
+            };
+
+            Action addFieldsForExponentialMode = () =>
+            {
+                Inspector.DrawFloatField(density);
+            };
+            
             BeginGroup(property.name);
 
-            var fog = property.FindPropertyRelative("_fog");
             Inspector.DrawCheckbox(fog);
 
             if (fog.boolValue)
             {
                 EditorGUI.indentLevel++;
-                Inspector.DrawPropertyField(property.FindPropertyRelative("_color"));
+                Inspector.DrawPropertyField(color);
 
-                var mode = property.FindPropertyRelative("_mode");
                 Inspector.DrawPopupGroup(
                     mode,
                     new [] {"Linear", "Exponential", "Exponential Squared"}
                 );
-
-                Action addFieldsForLinearMode = () => {
-                    Inspector.DrawFloatField(property.FindPropertyRelative("_start"));
-                    Inspector.DrawFloatField(property.FindPropertyRelative("_end"));
-                };
-
-                Action addFieldsForExponentialMode = () =>
-                {
-                    Inspector.DrawFloatField(property.FindPropertyRelative("_density"));
-                };
 
                 switch (mode.stringValue)
                 {
@@ -465,19 +473,11 @@ namespace EssentialPackages.LightingEditor.Editor
                 EditorGUI.indentLevel--;
             }
             
-            Inspector.DrawPropertyField(property.FindPropertyRelative("_haloTexture"));
-            Inspector.DrawFloatSlider(
-                property.FindPropertyRelative("_haloStrength"),
-                0.0f,
-                1.0f
-            );
-            Inspector.DrawFloatField(property.FindPropertyRelative("_flareFadeSpeed"));
-            Inspector.DrawFloatSlider(
-                property.FindPropertyRelative("_flareFadeStrength"),
-                0.0f,
-                1.0f
-            );
-            Inspector.DrawPropertyField(property.FindPropertyRelative("_spotCookie"));
+            Inspector.DrawPropertyField(haloTexture);
+            Inspector.DrawFloatSlider(haloStrength, 0.0f, 1.0f);
+            Inspector.DrawFloatField(flareFadeSpeed);
+            Inspector.DrawFloatSlider(flareFadeStrength, 0.0f, 1.0f);
+            Inspector.DrawPropertyField(spotCookie);
 
             EndGroup();
         }

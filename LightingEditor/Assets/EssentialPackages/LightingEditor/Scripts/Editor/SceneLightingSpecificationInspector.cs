@@ -62,20 +62,20 @@ namespace EssentialPackages.LightingEditor.Editor
             var skyboxMaterial = property.FindPropertyRelative("_skyboxMaterial");
             var sunSource = property.FindPropertyRelative("_sunSource");
                 
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
             
             Inspector.DrawPropertyField(skyboxMaterial);
             Inspector.DrawPropertyField(sunSource);
             
             EditorGUILayout.Space();
             
-            DrawSubHeader(environmentLighting.name);
+            BeginGroup(environmentLighting.name, EditorStyles.label);
             DrawEnvironmentLighting(environmentLighting);
             
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
 
-            DrawSubHeader(environmentReflections.name);
+            BeginGroup(environmentReflections.name, EditorStyles.label);
             DrawEnvironmentReflections(environmentReflections);
 
             EndGroup();
@@ -182,7 +182,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private static void DrawRealtimeLightingGroup(SerializedProperty property)
         {
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
             
             Inspector.DrawCheckbox(property.FindPropertyRelative("_realtimeGlobalIllumination"));
             
@@ -195,7 +195,7 @@ namespace EssentialPackages.LightingEditor.Editor
             var lightingMode = property.FindPropertyRelative("_lightingMode");
             var realtimeShadowColor = property.FindPropertyRelative("_realtimeShadowColor");
             
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
 
             Inspector.DrawCheckbox(bakedGlobalIllumination);
 
@@ -243,7 +243,7 @@ namespace EssentialPackages.LightingEditor.Editor
             var albedoBoost = property.FindPropertyRelative("_albedoBoost");
             var lightmapParameters = property.FindPropertyRelative("_lightmapParameters");
             
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
 
             Action drawDirectRadius = () =>
             {
@@ -439,7 +439,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawFloatField(density);
             };
             
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
 
             Inspector.DrawCheckbox(fog);
 
@@ -490,9 +490,9 @@ namespace EssentialPackages.LightingEditor.Editor
             var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
             var autoGenerate = property.FindPropertyRelative("_autoGenerate");
             
-            BeginGroup(property.name);
+            BeginGroup(property.name, EditorStyles.boldLabel);
             
-            DrawSubHeader(lightProbeVisualization.name);
+            BeginGroup(lightProbeVisualization.name, EditorStyles.label);
 
             Inspector.DrawPopupGroup(
                 dropdownMenu,
@@ -510,11 +510,11 @@ namespace EssentialPackages.LightingEditor.Editor
             Inspector.DrawCheckbox(autoGenerate);
         }
 
-        private static void BeginGroup(string header)
+        private static void BeginGroup(string header, GUIStyle guiStyle)
         {
             EditorGUILayout.LabelField(
                 ObjectNames.NicifyVariableName(header),
-                EditorStyles.boldLabel);
+                guiStyle);
             EditorGUI.indentLevel++;
         }
 
@@ -522,12 +522,6 @@ namespace EssentialPackages.LightingEditor.Editor
         {
             EditorGUI.indentLevel = 0;
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        }
-
-        private static void DrawSubHeader(string subheader)
-        {
-            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(subheader));
-            EditorGUI.indentLevel++;
         }
     }
 }

@@ -116,22 +116,23 @@ namespace EssentialPackages.LightingEditor.Editor
                     colorSelected();
                     break;
             }
-            
-            if (realtimeEnabled || bakedEnabled)
+
+            if (!realtimeEnabled && !bakedEnabled)
             {
-                if (realtimeEnabled && !bakedEnabled)
-                {
-                    ambientMode.stringValue = "Realtime";
-                }
-                else if (!realtimeEnabled && bakedEnabled)
-                {
-                    ambientMode.stringValue = "Baked";
-                }
-            
-                EditorGUI.BeginDisabledGroup(!realtimeEnabled || !bakedEnabled);
-                Inspector.DrawPopupGroup(ambientMode, new [] {"Realtime", "Baked"});
-                EditorGUI.EndDisabledGroup();
+                return;
             }
+            if (realtimeEnabled && !bakedEnabled)
+            {
+                ambientMode.stringValue = "Realtime";
+            }
+            else if (!realtimeEnabled)
+            {
+                ambientMode.stringValue = "Baked";
+            }
+            
+            EditorGUI.BeginDisabledGroup(!realtimeEnabled || !bakedEnabled);
+            Inspector.DrawPopupGroup(ambientMode, new [] {"Realtime", "Baked"});
+            EditorGUI.EndDisabledGroup();
         }
 
         private static void DrawEnvironmentReflections(SerializedProperty property)
@@ -337,18 +338,9 @@ namespace EssentialPackages.LightingEditor.Editor
                     EditorGUI.EndDisabledGroup();
                 };
 
-                switch (filtering.stringValue)
+                if (!filtering.stringValue.Equals("None") & !filtering.stringValue.Equals("Auto"))
                 {
-                    case "None":
-                        break;
-                    case "Auto":
-                        break;
-                    case "Advanced":
-                        drawAdvancedFilter();
-                        break;
-                    default:
-                        drawAdvancedFilter();
-                        break;
+                    drawAdvancedFilter();
                 }
 
                 EditorGUI.indentLevel--;
@@ -356,7 +348,6 @@ namespace EssentialPackages.LightingEditor.Editor
             };
 
             EditorGUI.BeginDisabledGroup(!bakedEnabled);
-            
             
             Inspector.DrawPopupGroup(lightmapper, new [] {"Enlighten", "Progressive"});
             

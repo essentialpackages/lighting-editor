@@ -61,8 +61,7 @@ namespace EssentialPackages.LightingEditor.Editor
             var environmentLighting = serializedProperty.FindPropertyRelative("_environmentLighting");
             var environmentReflections = serializedProperty.FindPropertyRelative("_environmentReflections");
 
-            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(serializedProperty.name), EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(serializedProperty.name);
             
             Inspector.DrawPropertyField(serializedProperty.FindPropertyRelative("_skyboxMaterial"));
             Inspector.DrawPropertyField(serializedProperty.FindPropertyRelative("_sunSource"));
@@ -186,29 +185,21 @@ namespace EssentialPackages.LightingEditor.Editor
                 5
             );
 
-            EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EndGroup();
         }
 
         private static void DrawRealtimeLightingGroup(SerializedProperty property)
         {
-            EditorGUILayout.LabelField(
-                ObjectNames.NicifyVariableName(property.name),
-                EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(property.name);
             
             Inspector.DrawCheckbox(property.FindPropertyRelative("_realtimeGlobalIllumination"));
             
-            EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EndGroup();
         }
 
         private static void DrawMixedLightingGroup(SerializedProperty property)
         {
-            EditorGUILayout.LabelField(
-                ObjectNames.NicifyVariableName(property.name),
-                EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(property.name);
 
             var bakedGlobalIllumination = property.FindPropertyRelative("_bakedGlobalIllumination");
             Inspector.DrawCheckbox(bakedGlobalIllumination);
@@ -225,17 +216,13 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawPropertyField(property.FindPropertyRelative("_realtimeShadowColor"));
             }
             EditorGUI.EndDisabledGroup();
-            
-            EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+            EndGroup();
         }
 
         private void DrawLightmappingSettings(SerializedProperty property)
         {
-            EditorGUILayout.LabelField(
-                ObjectNames.NicifyVariableName(property.name),
-                EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(property.name);
 
             var lightMapper = property.FindPropertyRelative("_lightmapper");
 
@@ -479,17 +466,13 @@ namespace EssentialPackages.LightingEditor.Editor
                 new [] {"Default-Medium", "Default-HighResolution", "Default-LowResolution", "Default-VeryLowResolution", "Create New ..."}
             );
             EditorGUI.EndDisabledGroup();
-            
-            EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+            EndGroup();
         }
 
         private static void DrawOtherSettings(SerializedProperty property)
         {
-            EditorGUILayout.LabelField(
-                ObjectNames.NicifyVariableName(property.name),
-                EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(property.name);
 
             var fog = property.FindPropertyRelative("_fog");
             Inspector.DrawCheckbox(fog);
@@ -548,17 +531,13 @@ namespace EssentialPackages.LightingEditor.Editor
                 1.0f
             );
             Inspector.DrawPropertyField(property.FindPropertyRelative("_spotCookie"));
-            
-            EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+            EndGroup();
         }
 
         private static void DrawDebugSettings(SerializedProperty property)
         {
-            EditorGUILayout.LabelField(
-                ObjectNames.NicifyVariableName(property.name),
-                EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
+            BeginGroup(property.name);
             
             var lightProbeVisualization = property.FindPropertyRelative("_lightProbeVisualization");
             
@@ -579,6 +558,20 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUILayout.Space();
             
             Inspector.DrawCheckbox(property.FindPropertyRelative("_autoGenerate"));
+        }
+
+        private static void BeginGroup(string header)
+        {
+            EditorGUILayout.LabelField(
+                ObjectNames.NicifyVariableName(header),
+                EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+        }
+
+        private static void EndGroup()
+        {
+            EditorGUI.indentLevel = 0;
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
     }
 }

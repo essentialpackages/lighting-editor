@@ -13,15 +13,8 @@ namespace EssentialPackages.LightingEditor.Editor
     [CustomEditor(typeof(SceneLightingSpecification))]
     public class SceneLightingSpecificationInspector : UnityEditor.Editor
     {
-        private SceneLightingSpecification TargetScript { get; set; }
-        
-        private bool RealtimeEnabled { get; set; }
-        private bool BakedEnabled { get; set; }
-        
         private void OnEnable()
         {
-            TargetScript = (SceneLightingSpecification) target;
-            
             var environment = serializedObject.FindProperty("_environment");
             var skyboxMaterial = environment.FindPropertyRelative("_skyboxMaterial");
             if (skyboxMaterial.objectReferenceValue == null)
@@ -41,21 +34,20 @@ namespace EssentialPackages.LightingEditor.Editor
             var otherSettings = serializedObject.FindProperty("_otherSettings");
             var debugSettings = serializedObject.FindProperty("_debugSettings");
 
-            RealtimeEnabled = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue;
-            BakedEnabled = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
+            var realtimeEnabled = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue;
+            var bakedEnabled = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
                                  
-
-            DrawEnvironmentGroup(environment);
+            DrawEnvironmentGroup(environment, realtimeEnabled, bakedEnabled);
             DrawRealtimeLightingGroup(realtimeLighting);
             DrawMixedLightingGroup(mixedLighting);
-            DrawLightmappingSettings(lightmappingSettings);
+            DrawLightmappingSettings(lightmappingSettings, realtimeEnabled, bakedEnabled);
             DrawOtherSettings(otherSettings);
             DrawDebugSettings(debugSettings);
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawEnvironmentGroup(SerializedProperty property)
+        private static void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
         {
             var environmentLighting = property.FindPropertyRelative("_environmentLighting");
             var environmentReflections = property.FindPropertyRelative("_environmentReflections");
@@ -70,7 +62,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUILayout.Space();
             
             BeginGroup(environmentLighting.name, EditorStyles.label);
-            DrawEnvironmentLighting(environmentLighting);
+            DrawEnvironmentLighting(environmentLighting, realtimeEnabled, bakedEnabled);
             
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
@@ -81,7 +73,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EndGroup();
         }
 
-        private void DrawEnvironmentLighting(SerializedProperty property)
+        private static void DrawEnvironmentLighting(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
         {
             var source = property.FindPropertyRelative("_source");
             var intensityMultiplier = property.FindPropertyRelative("_intensityMultiplier");
@@ -125,18 +117,18 @@ namespace EssentialPackages.LightingEditor.Editor
                     break;
             }
             
-            if (RealtimeEnabled || BakedEnabled)
+            if (realtimeEnabled || bakedEnabled)
             {
-                if (RealtimeEnabled && !BakedEnabled)
+                if (realtimeEnabled && !bakedEnabled)
                 {
                     ambientMode.stringValue = "Realtime";
                 }
-                else if (!RealtimeEnabled && BakedEnabled)
+                else if (!realtimeEnabled && bakedEnabled)
                 {
                     ambientMode.stringValue = "Baked";
                 }
             
-                EditorGUI.BeginDisabledGroup(!RealtimeEnabled || !BakedEnabled);
+                EditorGUI.BeginDisabledGroup(!realtimeEnabled || !bakedEnabled);
                 Inspector.DrawPopupGroup(ambientMode, new [] {"Realtime", "Baked"});
                 EditorGUI.EndDisabledGroup();
             }
@@ -210,7 +202,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EndGroup();
         }
 
-        private void DrawLightmappingSettings(SerializedProperty property)
+        private static void DrawLightmappingSettings(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
         {
             var lightMapper = property.FindPropertyRelative("_lightmapper");
             var ambientOcclusion = property.FindPropertyRelative("_ambientOcclusion");
@@ -363,7 +355,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 EditorGUILayout.Space();
             };
 
-            EditorGUI.BeginDisabledGroup(!BakedEnabled);
+            EditorGUI.BeginDisabledGroup(!bakedEnabled);
             
             
             Inspector.DrawPopupGroup(lightmapper, new [] {"Enlighten", "Progressive"});
@@ -374,11 +366,11 @@ namespace EssentialPackages.LightingEditor.Editor
             }
             EditorGUI.EndDisabledGroup();
             
-            EditorGUI.BeginDisabledGroup(!RealtimeEnabled);
+            EditorGUI.BeginDisabledGroup(!realtimeEnabled);
             Inspector.DrawIntField(indirectResolution);
             EditorGUI.EndDisabledGroup();
             
-            EditorGUI.BeginDisabledGroup(!BakedEnabled);
+            EditorGUI.BeginDisabledGroup(!bakedEnabled);
             Inspector.DrawFloatField(lightmapResolution);
             Inspector.DrawIntField(lightmapPadding);
             Inspector.DrawPopupGroup(lightmapSize, new [] {"32", "64", "128", "256", "512", "1024", "2048", "4096"});
@@ -402,7 +394,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             EditorGUI.EndDisabledGroup();
             
-            EditorGUI.BeginDisabledGroup(!RealtimeEnabled && !BakedEnabled);
+            EditorGUI.BeginDisabledGroup(!realtimeEnabled && !bakedEnabled);
             Inspector.DrawPopupGroup(directionalMode, new [] {"Non-Directional", "Directional"});
             Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
             Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);

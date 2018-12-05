@@ -61,41 +61,6 @@ namespace EssentialPackages.LightingEditor.Editor
             var environmentReflections = property.FindPropertyRelative("_environmentReflections");
             var skyboxMaterial = property.FindPropertyRelative("_skyboxMaterial");
             var sunSource = property.FindPropertyRelative("_sunSource");
-            var lightingSource = environmentLighting.FindPropertyRelative("_source");
-            var lightingIntensityMultiplier = environmentLighting.FindPropertyRelative("_intensityMultiplier");
-            var skyColor = environmentLighting.FindPropertyRelative("_skyColor");
-            var equatorColor = environmentLighting.FindPropertyRelative("_equatorColor");
-            var groundColor = environmentLighting.FindPropertyRelative("_groundColor");
-            var ambientColor = environmentLighting.FindPropertyRelative("_ambientColor");
-            var ambientMode = environmentLighting.FindPropertyRelative("_ambientMode");
-            var reflectionSource = environmentReflections.FindPropertyRelative("_source");
-            var resolution = environmentReflections.FindPropertyRelative("_resolution");
-            var cubemap = environmentReflections.FindPropertyRelative("_cubemap");
-            var compression = environmentReflections.FindPropertyRelative("_compression");
-            var reflectionIntensityMultiplier = environmentReflections.FindPropertyRelative("_intensityMultiplier");
-            var bounces = environmentReflections.FindPropertyRelative("_bounces");
-                
-            Action addFieldsForSkybox = () => {
-                Inspector.DrawFloatSlider(lightingIntensityMultiplier, 0.0f, 8.0f); 
-            };
-            
-            Action addFieldsForGradient = () => {
-                Inspector.DrawPropertyField(skyColor);
-                Inspector.DrawPropertyField(equatorColor);
-                Inspector.DrawPropertyField(groundColor);
-            };
-
-            Action addFieldsForColor = () => {
-                Inspector.DrawPropertyField(ambientColor);
-            };
-                
-            Action addFieldsForSkyboxNo2 = () => {
-                Inspector.DrawPopupGroup(resolution, new [] {"16", "32", "64", "128", "256", "512", "1024", "2048"});
-            };
-            
-            Action addFieldsForCustom = () => {
-                Inspector.DrawPropertyField(cubemap);
-            };
                 
             BeginGroup(property.name);
             
@@ -104,26 +69,59 @@ namespace EssentialPackages.LightingEditor.Editor
             
             EditorGUILayout.Space();
             
-            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(environmentLighting.name));
-            EditorGUI.indentLevel++;
-
-            Inspector.DrawPopupGroup(lightingSource, new [] {"Skybox", "Gradient", "Color"});
+            DrawSubHeader(environmentLighting.name);
+            DrawEnvironmentLighting(environmentLighting);
             
-            switch (lightingSource.stringValue)
+            EditorGUI.indentLevel--;
+            EditorGUILayout.Space();
+
+            DrawSubHeader(environmentReflections.name);
+            DrawEnvironmentReflections(environmentReflections);
+
+            EndGroup();
+        }
+
+        private void DrawEnvironmentLighting(SerializedProperty property)
+        {
+            var source = property.FindPropertyRelative("_source");
+            var intensityMultiplier = property.FindPropertyRelative("_intensityMultiplier");
+            var skyColor = property.FindPropertyRelative("_skyColor");
+            var equatorColor = property.FindPropertyRelative("_equatorColor");
+            var groundColor = property.FindPropertyRelative("_groundColor");
+            var ambientColor = property.FindPropertyRelative("_ambientColor");
+            var ambientMode = property.FindPropertyRelative("_ambientMode");
+            
+            Action skyboxSelected = () => {
+                Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 8.0f); 
+            };
+            
+            Action gradientSelected = () => {
+                Inspector.DrawPropertyField(skyColor);
+                Inspector.DrawPropertyField(equatorColor);
+                Inspector.DrawPropertyField(groundColor);
+            };
+
+            Action colorSelected = () => {
+                Inspector.DrawPropertyField(ambientColor);
+            };
+            
+            Inspector.DrawPopupGroup(source, new [] {"Skybox", "Gradient", "Color"});
+            
+            switch (source.stringValue)
             {
                 case "Skybox":
-                    addFieldsForSkybox();
+                    skyboxSelected();
                     break;
                 case "Gradient":
-                    addFieldsForGradient();
+                    gradientSelected();
                     break;
                 case "Color":
-                    addFieldsForColor();
+                    colorSelected();
                     break;
                 default:
-                    addFieldsForSkybox();
-                    addFieldsForGradient();
-                    addFieldsForColor();
+                    skyboxSelected();
+                    gradientSelected();
+                    colorSelected();
                     break;
             }
             
@@ -142,16 +140,28 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawPopupGroup(ambientMode, new [] {"Realtime", "Baked"});
                 EditorGUI.EndDisabledGroup();
             }
-            
-            EditorGUI.indentLevel--;
-            EditorGUILayout.Space();
+        }
 
-            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(environmentReflections.name));
-            EditorGUI.indentLevel++;
+        private static void DrawEnvironmentReflections(SerializedProperty property)
+        {
+            var source = property.FindPropertyRelative("_source");
+            var resolution = property.FindPropertyRelative("_resolution");
+            var cubemap = property.FindPropertyRelative("_cubemap");
+            var compression = property.FindPropertyRelative("_compression");
+            var intensityMultiplier = property.FindPropertyRelative("_intensityMultiplier");
+            var bounces = property.FindPropertyRelative("_bounces");
             
-            Inspector.DrawPopupGroup(reflectionSource, new [] {"Skybox", "Custom"});
+            Action addFieldsForSkyboxNo2 = () => {
+                Inspector.DrawPopupGroup(resolution, new [] {"16", "32", "64", "128", "256", "512", "1024", "2048"});
+            };
             
-            switch (reflectionSource.stringValue)
+            Action addFieldsForCustom = () => {
+                Inspector.DrawPropertyField(cubemap);
+            };
+            
+            Inspector.DrawPopupGroup(source, new [] {"Skybox", "Custom"});
+            
+            switch (source.stringValue)
             {
                 case "Skybox":
                     addFieldsForSkyboxNo2();
@@ -166,10 +176,8 @@ namespace EssentialPackages.LightingEditor.Editor
             }
 
             Inspector.DrawPopupGroup(compression, new [] {"Uncompressed", "Compressed", "Auto"});
-            Inspector.DrawFloatSlider(reflectionIntensityMultiplier, 0.0f, 1.0f);
+            Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 1.0f);
             Inspector.DrawIntSlider(bounces, 1, 5);
-
-            EndGroup();
         }
 
         private static void DrawRealtimeLightingGroup(SerializedProperty property)
@@ -556,6 +564,12 @@ namespace EssentialPackages.LightingEditor.Editor
         {
             EditorGUI.indentLevel = 0;
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        }
+
+        private static void DrawSubHeader(string subheader)
+        {
+            EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(subheader));
+            EditorGUI.indentLevel++;
         }
     }
 }

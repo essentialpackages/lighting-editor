@@ -26,6 +26,11 @@ namespace EssentialPackages.LightingEditor.Editor
         public override void OnInspectorGUI()
         {
             //DrawDefaultInspector();
+            EditorGUILayout.BeginVertical();
+            SaveRenderSettings();
+            LoadRenderSettings();
+            EditorGUILayout.EndVertical();
+            EndGroup();
 
             var environment = serializedObject.FindProperty("_environment");
             var realtimeLighting = serializedObject.FindProperty("_realtimeLighting");
@@ -45,6 +50,22 @@ namespace EssentialPackages.LightingEditor.Editor
             DrawDebugSettings(debugSettings);
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void SaveRenderSettings()
+        {
+            if (GUILayout.Button("Scriptable Object < Render Settings"))
+            {
+                
+            }
+        }
+
+        private void LoadRenderSettings()
+        {
+            if (GUILayout.Button("Scriptable Object > Render Settings"))
+            {
+                
+            }
         }
 
         private static void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)

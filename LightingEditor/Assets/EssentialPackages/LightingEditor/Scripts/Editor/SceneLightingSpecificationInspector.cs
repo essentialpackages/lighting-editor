@@ -1,4 +1,5 @@
 ﻿using System;
+using EssentialPackages.LightingEditor.Editor.Classes;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -56,7 +57,82 @@ namespace EssentialPackages.LightingEditor.Editor
         {
             if (GUILayout.Button("Scriptable Object < Render Settings"))
             {
+                var environment = serializedObject.FindProperty("_environment");
+                var environmentLighting = environment.FindPropertyRelative("_environmentLighting");
+                var environmentReflections = environment.FindPropertyRelative("_environmentReflections");
                 
+                environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue = RenderSettings.skybox;
+                environment.FindPropertyRelative("_sunSource").objectReferenceValue = RenderSettings.sun;
+                
+
+                environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue = RenderSettings.reflectionIntensity;
+                environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
+                
+                
+                /*RenderSettings.ambientEquatorColor;
+                RenderSettings.ambientGroundColor;
+                RenderSettings.ambientIntensity;
+                RenderSettings.ambientLight;
+                RenderSettings.ambientMode;
+                RenderSettings.ambientProbe;
+                RenderSettings.ambientSkyboxAmount;
+                RenderSettings.ambientSkyColor;
+                RenderSettings.customReflection;
+                RenderSettings.defaultReflectionMode;
+                RenderSettings.defaultReflectionResolution;
+                RenderSettings.flareFadeSpeed;
+                RenderSettings.flareStrength;
+                RenderSettings.fog;
+                RenderSettings.fogColor;
+                RenderSettings.fogDensity;
+                RenderSettings.fogEndDistance;
+                RenderSettings.fogMode;
+                RenderSettings.fogStartDistance;
+                RenderSettings.haloStrength;
+               
+
+                
+                RenderSettings.subtractiveShadowColor;
+                
+                LightmapEditorSettings.aoAmount;
+                LightmapEditorSettings.aoContrast;
+                LightmapEditorSettings.aoExponentDirect;
+                LightmapEditorSettings.aoExponentIndirect;
+                LightmapEditorSettings.aoMaxDistance;
+                LightmapEditorSettings.bakeResolution;
+                LightmapEditorSettings.bounceBoost;
+                LightmapEditorSettings.bounceIntensity;
+                LightmapEditorSettings.bounces;
+                LightmapEditorSettings.directSampleCount;
+                LightmapEditorSettings.enableAmbientOcclusion;
+                LightmapEditorSettings.filteringAtrousPositionSigmaAO;
+                LightmapEditorSettings.filteringAtrousPositionSigmaDirect;
+                LightmapEditorSettings.filteringAtrousPositionSigmaIndirect;
+                LightmapEditorSettings.filteringGaussRadiusAO;
+                LightmapEditorSettings.filteringGaussRadiusDirect;
+                LightmapEditorSettings.filteringGaussRadiusIndirect;
+                LightmapEditorSettings.filteringMode;
+                LightmapEditorSettings.filterTypeAO;
+                LightmapEditorSettings.filterTypeDirect;
+                LightmapEditorSettings.filterTypeIndirect;
+                LightmapEditorSettings.finalGatherContrastThreshold;
+                LightmapEditorSettings.finalGatherGradientThreshold;
+                LightmapEditorSettings.finalGatherInterpolationPoints;
+                LightmapEditorSettings.finalGatherRays;
+                LightmapEditorSettings.indirectSampleCount;
+                LightmapEditorSettings.lightmapper;
+                LightmapEditorSettings.lightmapsMode;
+                LightmapEditorSettings.maxAtlasSize;
+                LightmapEditorSettings.padding;
+                LightmapEditorSettings.prioritizeView;
+                LightmapEditorSettings.quality;
+                LightmapEditorSettings.realtimeResolution;
+                LightmapEditorSettings.reflectionCubemapCompression;
+                LightmapEditorSettings.resolution;
+                LightmapEditorSettings.sampling;
+                LightmapEditorSettings.skyLightColor;
+                LightmapEditorSettings.skyLightIntensity;
+                LightmapEditorSettings.textureCompression;*/
             }
         }
 

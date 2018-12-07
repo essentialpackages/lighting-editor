@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using EssentialPackages.LightingEditor.Editor.Classes;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
@@ -14,6 +15,8 @@ namespace EssentialPackages.LightingEditor.Editor
     [CustomEditor(typeof(SceneLightingSpecification))]
     public class SceneLightingSpecificationInspector : UnityEditor.Editor
     {
+        private SceneLightingSpecification TargetScript { get; set; }
+        
         private void OnEnable()
         {
             var environment = serializedObject.FindProperty("_environment");
@@ -22,6 +25,8 @@ namespace EssentialPackages.LightingEditor.Editor
             {
                 skyboxMaterial.objectReferenceValue = RenderSettings.skybox;
             }
+
+            TargetScript = (SceneLightingSpecification) target;
         }
 
         public override void OnInspectorGUI()
@@ -62,24 +67,38 @@ namespace EssentialPackages.LightingEditor.Editor
                 var environmentReflections = environment.FindPropertyRelative("_environmentReflections");
                 
                 environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue = RenderSettings.skybox;
-                environment.FindPropertyRelative("_sunSource").objectReferenceValue = RenderSettings.sun;
                 
+                // TODO
+                var sun = environment.FindPropertyRelative("_sunSource");
+                sun.objectReferenceValue = RenderSettings.sun;
+                //Debug.Log(RenderSettings.sun);
+                //Debug.Log(sun.exposedReferenceValue);
 
+                // environmentLighting.FindPropertyRelative("_source").stringValue = RenderSettings.ambientMode.ToString(); // wrong
+                environmentLighting.FindPropertyRelative("_intensityMultiplier").floatValue =
+                    RenderSettings.ambientIntensity;
+                environmentLighting.FindPropertyRelative("_skyColor").colorValue = RenderSettings.ambientSkyColor;
+                environmentLighting.FindPropertyRelative("_equatorColor").colorValue = RenderSettings.ambientEquatorColor;
+                environmentLighting.FindPropertyRelative("_groundColor").colorValue = RenderSettings.ambientGroundColor;
+                environmentLighting.FindPropertyRelative("_ambientColor").colorValue = RenderSettings.ambientLight;
+
+                environmentReflections.FindPropertyRelative("_source").stringValue =
+                    RenderSettings.defaultReflectionMode.ToString();
+                environmentReflections.FindPropertyRelative("_resolution").stringValue =
+                    RenderSettings.defaultReflectionResolution.ToString();
+                
+                
                 environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue = RenderSettings.reflectionIntensity;
                 environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
-                
-                
-                /*RenderSettings.ambientEquatorColor;
-                RenderSettings.ambientGroundColor;
-                RenderSettings.ambientIntensity;
-                RenderSettings.ambientLight;
-                RenderSettings.ambientMode;
+
+ 
+                /*                
                 RenderSettings.ambientProbe;
-                RenderSettings.ambientSkyboxAmount;
-                RenderSettings.ambientSkyColor;
-                RenderSettings.customReflection;
-                RenderSettings.defaultReflectionMode;
-                RenderSettings.defaultReflectionResolution;
+                RenderSettings.ambientSkyboxAmount; // obsolete
+                
+                RenderSettings.customReflection; = cubemap when custom is selected?
+                
+                
                 RenderSettings.flareFadeSpeed;
                 RenderSettings.flareStrength;
                 RenderSettings.fog;

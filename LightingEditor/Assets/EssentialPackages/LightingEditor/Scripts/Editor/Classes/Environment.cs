@@ -16,6 +16,12 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
 		[Space(10)]
 		[SerializeField] private EnvironmentReflections _environmentReflections;
 
+		public Light SunSource
+		{
+			get { return _sunSource; }
+			set { _sunSource = value; }
+		}
+
 #endif
 
 	}

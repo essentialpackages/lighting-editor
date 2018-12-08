@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using EssentialPackages.LightingEditor.Editor.Classes;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace EssentialPackages.LightingEditor.Editor
 {
@@ -18,7 +17,7 @@ namespace EssentialPackages.LightingEditor.Editor
         private SceneLightingSpecification TargetScript { get; set; }
         
         private void OnEnable()
-        {
+        {   
             var environment = serializedObject.FindProperty("_environment");
             var skyboxMaterial = environment.FindPropertyRelative("_skyboxMaterial");
             if (skyboxMaterial.objectReferenceValue == null)
@@ -67,14 +66,39 @@ namespace EssentialPackages.LightingEditor.Editor
                 var environmentReflections = environment.FindPropertyRelative("_environmentReflections");
                 
                 environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue = RenderSettings.skybox;
-                
-                // TODO
-                var sun = environment.FindPropertyRelative("_sunSource");
-                sun.objectReferenceValue = RenderSettings.sun;
-                //Debug.Log(RenderSettings.sun);
-                //Debug.Log(sun.exposedReferenceValue);
 
-                // environmentLighting.FindPropertyRelative("_source").stringValue = RenderSettings.ambientMode.ToString(); // wrong
+                var source = environmentLighting.FindPropertyRelative("_source");
+                switch (RenderSettings.ambientMode)
+                {
+                        case AmbientMode.Skybox:
+                            source.stringValue = "Skybox";
+                        break;
+                        case AmbientMode.Trilight:
+                            source.stringValue = "Gradient";
+                        break;
+                        case AmbientMode.Flat:
+                            source.stringValue = "Color";
+                        break;
+                        case AmbientMode.Custom:
+                            break;
+                        default:
+                            break;
+                }
+
+                // Important note No. 1: Because of the serialization of Light components, one cannot set the
+                // 'Sun Source' via property.FindPropertyRelative("_sunSource").objectReferenceValue
+                // As a workaround, set the value of your target script and call Update() afterwards to save changes.
+                // See also: https://docs.unity3d.com/ScriptReference/EditorUtility.SetDirty.html
+                // Important note No. 2: If you have removed the default light source in your lighting window,
+                // you will see 'Missing (Light)' inside the corresponding field. When saving this change,
+                // you would suspect, that 'Sun Source' inside the scriptable object will be set to Null. But instead
+                // RenderSettings.sun can still return a valid light component. Some experiments have shown, that the
+                // first light component which was created after deleting the reference inside the lighting window,
+                // will be used. The order of multiple light components inside the scene hierarchy does not play any
+                // role.
+                TargetScript.Environment.SunSource = RenderSettings.sun;
+                serializedObject.Update();
+
                 environmentLighting.FindPropertyRelative("_intensityMultiplier").floatValue =
                     RenderSettings.ambientIntensity;
                 environmentLighting.FindPropertyRelative("_skyColor").colorValue = RenderSettings.ambientSkyColor;
@@ -86,12 +110,13 @@ namespace EssentialPackages.LightingEditor.Editor
                     RenderSettings.defaultReflectionMode.ToString();
                 environmentReflections.FindPropertyRelative("_resolution").stringValue =
                     RenderSettings.defaultReflectionResolution.ToString();
-                
-                
+                environmentReflections.FindPropertyRelative("_cubemap").objectReferenceValue =
+                    RenderSettings.customReflection;
+                environmentReflections.FindPropertyRelative("_compression").stringValue =
+                    LightmapEditorSettings.reflectionCubemapCompression.ToString();
                 environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue = RenderSettings.reflectionIntensity;
                 environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
 
- 
                 /*                
                 RenderSettings.ambientProbe;
                 RenderSettings.ambientSkyboxAmount; // obsolete
@@ -163,18 +188,27 @@ namespace EssentialPackages.LightingEditor.Editor
             }
         }
 
-        private static void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
+        private void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
         {
             var environmentLighting = property.FindPropertyRelative("_environmentLighting");
             var environmentReflections = property.FindPropertyRelative("_environmentReflections");
             var skyboxMaterial = property.FindPropertyRelative("_skyboxMaterial");
             var sunSource = property.FindPropertyRelative("_sunSource");
-                
+ 
             BeginGroup(property.name, EditorStyles.boldLabel);
             
             Inspector.DrawPropertyField(skyboxMaterial);
-            Inspector.DrawPropertyField(sunSource);
             
+            // Important note: Because of the serialization of Light components, one cannot set
+            // property.FindPropertyRelative("_sunSource").objectReferenceValue
+            TargetScript.Environment.SunSource = EditorGUILayout.ObjectField(
+                ObjectNames.NicifyVariableName(sunSource.name),
+                TargetScript.Environment.SunSource,
+                typeof (Light),
+                true,
+                GUILayout.Width(EditorGUIUtility.currentViewWidth - 120)
+            ) as Light;
+
             EditorGUILayout.Space();
             
             BeginGroup(environmentLighting.name, EditorStyles.label);

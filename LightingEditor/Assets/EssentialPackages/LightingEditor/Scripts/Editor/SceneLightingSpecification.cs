@@ -26,7 +26,9 @@ namespace EssentialPackages.LightingEditor.Editor
 		
 		[Header("Debug Settings")]
 		[SerializeField] private DebugSettings _debugSettings;
-		
+
+		public Environment Environment => _environment;
+
 #endif
 		
 	}

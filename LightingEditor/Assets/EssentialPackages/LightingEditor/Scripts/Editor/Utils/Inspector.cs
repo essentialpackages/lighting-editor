@@ -64,13 +64,25 @@ namespace EssentialPackages.LightingEditor.Editor.Utils
             );
         }
 
-        public static void DrawPropertyField(SerializedProperty property)
+        public static void DrawPropertyField(SerializedProperty property, bool allowSceneObjects = false)
         {
             EditorGUILayout.PropertyField(
                 property,
+                allowSceneObjects,
                 GUILayout.Width(EditorGUIUtility.currentViewWidth - 120)
             );
         }
+        
+        /*public static UnityEngine.Object DrawObjectField(SerializedProperty property, Type type, bool allowSceneObjects = false)
+        {
+            return EditorGUILayout.ObjectField(
+                ObjectNames.NicifyVariableName(property.name),
+                (Light) property.exposedReferenceValue,
+                type,
+                allowSceneObjects,
+                GUILayout.Width(EditorGUIUtility.currentViewWidth - 120)
+            );
+        }*/
         
         public static void DrawPopupGroup(SerializedProperty serializedProperty, string[] choice, bool showLabel = true)
         {

@@ -14,7 +14,7 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
         [SerializeField] private LightMapper _lightmapper;
         [Space(10)]
         [Tooltip("Only active when Realtime Global Illumnination is active")] // TODO 
-        [SerializeField] private int _indirectResolution = 2;
+        [SerializeField] private float _indirectResolution = 2;
         [Tooltip("Only active when Baked Global Illumnination is active")]
         [SerializeField] private float _lightmapResolution = 10;
         [Tooltip("Only active when Baked Global Illumnination is active")]
@@ -36,6 +36,11 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
         [Tooltip("Only active when Ambient Occlusion is set to active")]
         [Range(0.0f, 10.0f)]
         [SerializeField] private float _directContribution = 0.0f;
+
+        [Tooltip("Only active when Final Gather is set to active")]
+        [SerializeField] private int _rayCount = 256;
+        [Tooltip("Only active when Final Gather is set to active")]
+        [SerializeField] private bool _denoising = true;
         
         [Tooltip("[Non-Directional, Directional] + only active when Realtime Global Illumination or Baked Global Illumination is active")]
         [SerializeField] private string _directionalMode = "Directional";

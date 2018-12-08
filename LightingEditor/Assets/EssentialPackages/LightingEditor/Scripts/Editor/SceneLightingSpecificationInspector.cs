@@ -2,6 +2,7 @@
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 namespace EssentialPackages.LightingEditor.Editor
@@ -64,6 +65,68 @@ namespace EssentialPackages.LightingEditor.Editor
                 var environment = serializedObject.FindProperty("_environment");
                 var environmentLighting = environment.FindPropertyRelative("_environmentLighting");
                 var environmentReflections = environment.FindPropertyRelative("_environmentReflections");
+                var realtimeLighting = serializedObject.FindProperty("_realtimeLighting");
+                var mixedLighting = serializedObject.FindProperty("_mixedLighting");
+                var lightmappingSettings = serializedObject.FindProperty("_lightmappingSettings");
+                var debugSettings = serializedObject.FindProperty("_debugSettings");
+                
+                var _realtimeGlobalIllumination = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination");
+                
+                var bakedGlobalIllumination = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination");
+                var lightingMode = mixedLighting.FindPropertyRelative("_lightingMode");
+                var realtimeShadowColor = mixedLighting.FindPropertyRelative("_realtimeShadowColor");
+                
+                var lightMapper = lightmappingSettings.FindPropertyRelative("_lightmapper");
+                var ambientOcclusion = lightmappingSettings.FindPropertyRelative("_ambientOcclusion");
+                var finalGather = lightmappingSettings.FindPropertyRelative("_finalGather");
+                var prioritizeView = lightMapper.FindPropertyRelative("_prioritizeView");
+                var directSamples = lightMapper.FindPropertyRelative("_directSamples");
+                var indirectSamples = lightMapper.FindPropertyRelative("_indirectSamples");
+                var bounces = lightMapper.FindPropertyRelative("_bounces");
+                var filtering = lightMapper.FindPropertyRelative("_filtering");
+                var directFilter = lightMapper.FindPropertyRelative("_directFilter");
+                var directRadius = lightMapper.FindPropertyRelative("_directRadius");
+                var directSigma = lightMapper.FindPropertyRelative("_directSigma");
+                var indirectRadius = lightMapper.FindPropertyRelative("_indirectRadius");
+                var indirectSigma = lightMapper.FindPropertyRelative("_indirectSigma");
+                var indirectFilter = lightMapper.FindPropertyRelative("_indirectFilter");
+                var ambientOcclusionRadius = lightMapper.FindPropertyRelative("_ambientOcclusionRadius");
+                var ambientOcclusionSigma = lightMapper.FindPropertyRelative("_ambientOcclusionSigma");
+                var ambientOcclusionFilter = lightMapper.FindPropertyRelative("_ambientOcclusionFilter");
+                var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
+                var indirectResolution = lightmappingSettings.FindPropertyRelative("_indirectResolution");
+                var lightmapResolution = lightmappingSettings.FindPropertyRelative("_lightmapResolution");
+                var lightmapPadding = lightmappingSettings.FindPropertyRelative("_lightmapPadding");
+                var lightmapSize = lightmappingSettings.FindPropertyRelative("_lightmapSize");
+                var compressLightmaps = lightmappingSettings.FindPropertyRelative("_compressLightmaps");
+                var maxDistance = lightmappingSettings.FindPropertyRelative("_maxDistance");
+                var indirectContribution = lightmappingSettings.FindPropertyRelative("_indirectContribution");
+                var directContribution = lightmappingSettings.FindPropertyRelative("_directContribution");
+                var rayCount = lightmappingSettings.FindPropertyRelative("_rayCount");
+                var denoising = lightmappingSettings.FindPropertyRelative("_denoising");
+                var directionalMode = lightmappingSettings.FindPropertyRelative("_directionalMode");
+                var indirectIntensity = lightmappingSettings.FindPropertyRelative("_indirectIntensity");
+                var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
+                var lightmapParameters = lightmappingSettings.FindPropertyRelative("_lightmapParameters");
+                
+                var otherSettings = serializedObject.FindProperty("_otherSettings");
+                var fog = otherSettings.FindPropertyRelative("_fog");
+                var color = otherSettings.FindPropertyRelative("_color");
+                var mode = otherSettings.FindPropertyRelative("_mode");
+                var start = otherSettings.FindPropertyRelative("_start");
+                var end = otherSettings.FindPropertyRelative("_end");
+                var density = otherSettings.FindPropertyRelative("_density");
+                var haloTexture = otherSettings.FindPropertyRelative("_haloTexture");
+                var haloStrength = otherSettings.FindPropertyRelative("_haloStrength");
+                var flareFadeSpeed = otherSettings.FindPropertyRelative("_flareFadeSpeed");
+                var flareFadeStrength = otherSettings.FindPropertyRelative("_flareFadeStrength");
+                var spotCookie = otherSettings.FindPropertyRelative("_spotCookie");
+                
+                var lightProbeVisualization = debugSettings.FindPropertyRelative("_lightProbeVisualization");
+                var dropdownMenu = lightProbeVisualization.FindPropertyRelative("_dropdownMenu");
+                var displayWeights = lightProbeVisualization.FindPropertyRelative("_displayWeights");
+                var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
+                var autoGenerate = debugSettings.FindPropertyRelative("_autoGenerate");
                 
                 environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue = RenderSettings.skybox;
 
@@ -117,66 +180,124 @@ namespace EssentialPackages.LightingEditor.Editor
                 environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue = RenderSettings.reflectionIntensity;
                 environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
 
+                // Realtime Lighting
+                _realtimeGlobalIllumination.boolValue = Lightmapping.realtimeGI;
+                
+                // Mixed Lighting
+                bakedGlobalIllumination.boolValue = Lightmapping.bakedGI;
+                switch (LightmapEditorSettings.mixedBakeMode)
+                {
+                    case MixedLightingMode.IndirectOnly:
+                        lightingMode.stringValue = "Baked Indirect";
+                        break;
+                    case MixedLightingMode.Subtractive:
+                        lightingMode.stringValue = "Subtractive";
+                        break;
+                    case MixedLightingMode.Shadowmask:
+                        lightingMode.stringValue = "Shadowmask";
+                        break;
+                    default:
+                        lightingMode.stringValue = LightmapEditorSettings.mixedBakeMode.ToString();
+                        break;
+                }
+                
+                realtimeShadowColor.colorValue = RenderSettings.subtractiveShadowColor;
+                
+                // Lightmapping Settings
+
+                ambientOcclusion.boolValue =  LightmapEditorSettings.enableAmbientOcclusion;
+                prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;;
+                directSamples.intValue = LightmapEditorSettings.directSampleCount;
+                indirectSamples.intValue = LightmapEditorSettings.indirectSampleCount;
+                var bou = new[] {"None", "1", "2", "3", "4"};
+                var modes = new[] {"Gaussian", "A-Trous", "None"};
+                bounces.stringValue = bou[LightmapEditorSettings.bounces];
+                filtering.stringValue = LightmapEditorSettings.filteringMode.ToString();
+                directFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeDirect];
+                directRadius.intValue = LightmapEditorSettings.filteringGaussRadiusDirect;
+                directSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaDirect;
+                indirectRadius.intValue = LightmapEditorSettings.filteringGaussRadiusIndirect;
+                indirectSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaIndirect;
+                indirectFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeIndirect];
+                ambientOcclusionRadius.intValue = LightmapEditorSettings.filteringGaussRadiusAO;
+                ambientOcclusionSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaAO;
+                ambientOcclusionFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeAO];
+                switch (LightmapEditorSettings.lightmapper)
+                {
+                    case LightmapEditorSettings.Lightmapper.Enlighten:
+                        lightmapper.stringValue = "Enlighten";
+                        break;
+                    case LightmapEditorSettings.Lightmapper.ProgressiveCPU:
+                        lightmapper.stringValue = "Progressive";
+                        break;
+                    default:
+                        lightmapper.stringValue = LightmapEditorSettings.lightmapper.ToString();
+                        break;
+                }
+                 
+                indirectResolution.floatValue = LightmapEditorSettings.realtimeResolution;
+                lightmapResolution.floatValue = LightmapEditorSettings.bakeResolution;
+                lightmapPadding.intValue = LightmapEditorSettings.padding;
+                lightmapSize.stringValue = LightmapEditorSettings.maxAtlasSize.ToString();
+                compressLightmaps.boolValue = LightmapEditorSettings.textureCompression;
+                maxDistance.floatValue = LightmapEditorSettings.aoMaxDistance;
+                indirectContribution.floatValue = LightmapEditorSettings.aoExponentIndirect;
+                directContribution.floatValue = LightmapEditorSettings.aoExponentDirect;
+                /*finalGather  = ;*/
+                switch (LightmapEditorSettings.lightmapsMode)
+                {
+                    case LightmapsMode.NonDirectional:
+                        directionalMode.stringValue = "Non-Directional";
+                        break;
+                    case LightmapsMode.CombinedDirectional:
+                        directionalMode.stringValue = "Directional";
+                        break;
+                    default:
+                        directionalMode.stringValue = LightmapEditorSettings.lightmapsMode.ToString();
+                        break;
+                }
+                indirectIntensity.floatValue = Lightmapping.indirectOutputScale;
+                albedoBoost.floatValue = Lightmapping.bounceBoost;
+                // lightmapParameters = ;
+
+                //Debug.Log(Lightmapping.);
+                
+                // Other Settings
+                fog.boolValue = RenderSettings.fog;
+                color.colorValue = RenderSettings.fogColor;
+                mode.stringValue = RenderSettings.fogMode.ToString();
+                start.floatValue = RenderSettings.fogStartDistance;
+                end.floatValue = RenderSettings.fogEndDistance;
+                density.floatValue = RenderSettings.fogDensity;
+                //haloTexture.objectReferenceValue
+                haloStrength.floatValue = RenderSettings.haloStrength;
+                flareFadeSpeed.floatValue = RenderSettings.flareFadeSpeed;
+                flareFadeStrength.floatValue = RenderSettings.flareStrength;
+                // spotCookie.objectReferenceValue
+
+                // Debug Settings
+                /*var type = typeof(UnityEditor.Refl);
+                dropdownMenu.stringValue = RenderSettings.;
+                displayWeights.boolValue = ;
+                displayOcclusion.boolValue = ReflectionProbeEditor.m_UseOcclusionCulling;*/
+                if (Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
+                {
+                    autoGenerate.boolValue = true;
+                }
+                else if (Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.OnDemand)
+                {
+                    autoGenerate.boolValue = false;
+                }
+
                 /*                
                 RenderSettings.ambientProbe;
                 RenderSettings.ambientSkyboxAmount; // obsolete
                 
-                RenderSettings.customReflection; = cubemap when custom is selected?
-                
-                
-                RenderSettings.flareFadeSpeed;
-                RenderSettings.flareStrength;
-                RenderSettings.fog;
-                RenderSettings.fogColor;
-                RenderSettings.fogDensity;
-                RenderSettings.fogEndDistance;
-                RenderSettings.fogMode;
-                RenderSettings.fogStartDistance;
-                RenderSettings.haloStrength;
-               
 
-                
-                RenderSettings.subtractiveShadowColor;
-                
-                LightmapEditorSettings.aoAmount;
-                LightmapEditorSettings.aoContrast;
-                LightmapEditorSettings.aoExponentDirect;
-                LightmapEditorSettings.aoExponentIndirect;
-                LightmapEditorSettings.aoMaxDistance;
-                LightmapEditorSettings.bakeResolution;
-                LightmapEditorSettings.bounceBoost;
-                LightmapEditorSettings.bounceIntensity;
-                LightmapEditorSettings.bounces;
-                LightmapEditorSettings.directSampleCount;
-                LightmapEditorSettings.enableAmbientOcclusion;
-                LightmapEditorSettings.filteringAtrousPositionSigmaAO;
-                LightmapEditorSettings.filteringAtrousPositionSigmaDirect;
-                LightmapEditorSettings.filteringAtrousPositionSigmaIndirect;
-                LightmapEditorSettings.filteringGaussRadiusAO;
-                LightmapEditorSettings.filteringGaussRadiusDirect;
-                LightmapEditorSettings.filteringGaussRadiusIndirect;
-                LightmapEditorSettings.filteringMode;
-                LightmapEditorSettings.filterTypeAO;
-                LightmapEditorSettings.filterTypeDirect;
-                LightmapEditorSettings.filterTypeIndirect;
-                LightmapEditorSettings.finalGatherContrastThreshold;
-                LightmapEditorSettings.finalGatherGradientThreshold;
-                LightmapEditorSettings.finalGatherInterpolationPoints;
-                LightmapEditorSettings.finalGatherRays;
-                LightmapEditorSettings.indirectSampleCount;
-                LightmapEditorSettings.lightmapper;
-                LightmapEditorSettings.lightmapsMode;
-                LightmapEditorSettings.maxAtlasSize;
-                LightmapEditorSettings.padding;
-                LightmapEditorSettings.prioritizeView;
                 LightmapEditorSettings.quality;
-                LightmapEditorSettings.realtimeResolution;
-                LightmapEditorSettings.reflectionCubemapCompression;
-                LightmapEditorSettings.resolution;
+
                 LightmapEditorSettings.sampling;
-                LightmapEditorSettings.skyLightColor;
-                LightmapEditorSettings.skyLightIntensity;
-                LightmapEditorSettings.textureCompression;*/
+                */
             }
         }
 
@@ -381,6 +502,8 @@ namespace EssentialPackages.LightingEditor.Editor
             var maxDistance = property.FindPropertyRelative("_maxDistance");
             var indirectContribution = property.FindPropertyRelative("_indirectContribution");
             var directContribution = property.FindPropertyRelative("_directContribution");
+            var rayCount = property.FindPropertyRelative("_rayCount");
+            var denoising = property.FindPropertyRelative("_denoising");
             var directionalMode = property.FindPropertyRelative("_directionalMode");
             var indirectIntensity = property.FindPropertyRelative("_indirectIntensity");
             var albedoBoost = property.FindPropertyRelative("_albedoBoost");
@@ -430,14 +553,14 @@ namespace EssentialPackages.LightingEditor.Editor
 
                 Action drawAdvancedFilter = () =>
                 {
-                    Inspector.DrawPopupGroup(directFilter, new[] {"Gaussian", "A-Torus", "None"});
+                    Inspector.DrawPopupGroup(directFilter, new[] {"Gaussian", "A-Trous", "None"});
 
                     switch (directFilter.stringValue)
                     {
                         case "Gaussian":
                             drawDirectRadius();
                             break;
-                        case "A-Torus":
+                        case "A-Trous":
                             drawDirectSigma();
                             break;
                         case "None":
@@ -448,14 +571,14 @@ namespace EssentialPackages.LightingEditor.Editor
                             break;
                     }
 
-                    Inspector.DrawPopupGroup(indirectFilter, new[] {"Gaussian", "A-Torus", "None"});
+                    Inspector.DrawPopupGroup(indirectFilter, new[] {"Gaussian", "A-Trous", "None"});
                     
                     switch (indirectFilter.stringValue)
                     {
                         case "Gaussian":
                             drawIndirectRadius();
                             break;
-                        case "A-Torus":
+                        case "A-Trous":
                             drawInirectSigma();
                             break;
                         case "None":
@@ -468,14 +591,14 @@ namespace EssentialPackages.LightingEditor.Editor
 
                     EditorGUI.BeginDisabledGroup(!ambientOcclusion.boolValue);
                     
-                    Inspector.DrawPopupGroup(ambientOcclusionFilter, new[] {"Gaussian", "A-Torus", "None"});
+                    Inspector.DrawPopupGroup(ambientOcclusionFilter, new[] {"Gaussian", "A-Trous", "None"});
 
                     switch (ambientOcclusionFilter.stringValue)
                     {
                         case "Gaussian":
                             drawAmbientOcclusionRadius();
                             break;
-                        case "A-Torus":
+                        case "A-Trous":
                             drawAmbientOcclusionSigma();
                             break;
                         case "None":
@@ -508,7 +631,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!realtimeEnabled);
-            Inspector.DrawIntField(indirectResolution);
+            Inspector.DrawFloatField(indirectResolution);
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.BeginDisabledGroup(!bakedEnabled);
@@ -531,6 +654,11 @@ namespace EssentialPackages.LightingEditor.Editor
             if (lightmapper.stringValue != "Progressive")
             {
                 Inspector.DrawCheckbox(finalGather);
+                if (finalGather.boolValue)
+                {
+                    Inspector.DrawIntField(rayCount);
+                    Inspector.DrawCheckbox(denoising);
+                }
             }
 
             EditorGUI.EndDisabledGroup();

@@ -45,6 +45,14 @@ namespace EssentialPackages.LightingEditor.Editor.Utils
                 property.boolValue
             );
         }
+        
+        public static void DrawCheckboxLeft(SerializedProperty property)
+        {
+            property.boolValue = EditorGUILayout.ToggleLeft(
+                ObjectNames.NicifyVariableName(property.name),
+                property.boolValue
+            );
+        }
 
         public static void DrawIntField(SerializedProperty property)
         {
@@ -106,6 +114,11 @@ namespace EssentialPackages.LightingEditor.Editor.Utils
             serializedProperty.stringValue = text;
 
             EditorGUILayout.EndHorizontal();
+        }
+
+        public static void DrawHorizontalLine()
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
     }
 }

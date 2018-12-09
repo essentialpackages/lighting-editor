@@ -811,16 +811,11 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            Inspector.DrawHorizontalLine();
             
-            //Inspector.DrawCheckbox(autoGenerate);
             EditorGUILayout.BeginHorizontal();
-
             GUILayout.FlexibleSpace();
-            autoGenerate.boolValue = EditorGUILayout.ToggleLeft(
-                ObjectNames.NicifyVariableName(autoGenerate.name),
-                autoGenerate.boolValue
-            );
+            Inspector.DrawCheckboxLeft(autoGenerate);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -835,7 +830,7 @@ namespace EssentialPackages.LightingEditor.Editor
         private static void EndGroup()
         {
             EditorGUI.indentLevel = 0;
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            Inspector.DrawHorizontalLine();
         }
     }
 }

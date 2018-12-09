@@ -21,6 +21,7 @@ namespace EssentialPackages.LightingEditor.Editor
     public class SceneLightingSpecificationInspector : UnityEditor.Editor
     {
         private SceneLightingSpecification TargetScript { get; set; }
+        private bool showAdditionalInformation = false;
         
         private void OnEnable()
         {   
@@ -38,6 +39,28 @@ namespace EssentialPackages.LightingEditor.Editor
         {
             //DrawDefaultInspector();
             EditorGUILayout.BeginVertical();
+            
+            showAdditionalInformation = EditorGUILayout.Foldout(showAdditionalInformation, "Tips");
+            if (showAdditionalInformation)
+            {
+                EditorGUILayout.HelpBox("This scriptable object enables developers to version specific lighting settings."+
+                                        "It can be used to transfer lighting settings to other scenes as well as to" +
+                                        " create design guidelines."
+                    , MessageType.Info);
+                EditorGUILayout.HelpBox("Unless there are many scenes with the same lighting settings," +
+                                        " developers should always create one instance per scene inside an Editor folder." +
+                                        " Ideally choose a name for the scriptable object which is similar to the name of" +
+                                        " the corresponding scene."
+                    , MessageType.Info);
+                EditorGUILayout.HelpBox(
+                    "Active values of dropdown menus (inside the scene lighting window) are stored as" +
+                    " strings (inside the scriptable object). This will assure that settings are not" +
+                    " accidentally changed when upgrading Unity to a version, having different" +
+                    " enumerations. But this does also mean, that developers should check all" +
+                    " instances previously created, when upgrading Unity/project."
+                    , MessageType.Info);
+            }
+
             SaveRenderSettings();
             LoadRenderSettings();
             EditorGUILayout.EndVertical();
@@ -65,7 +88,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private void SaveRenderSettings()
         {
-            if (GUILayout.Button("Scriptable Object < Render Settings"))
+            if (GUILayout.Button("Scriptable Object < Scene Lighting Settings"))
             {
                 var environment = serializedObject.FindProperty("_environment");
                 var environmentLighting = environment.FindPropertyRelative("_environmentLighting");
@@ -316,10 +339,12 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private void LoadRenderSettings()
         {
-            if (GUILayout.Button("Scriptable Object > Render Settings"))
+            EditorGUI.BeginDisabledGroup(true);
+            if (GUILayout.Button("Scriptable Object > Scene Lighting Settings"))
             {
                 
             }
+            EditorGUI.EndDisabledGroup();
         }
 
         private void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
@@ -768,7 +793,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             var normalColor = GUI.color;
             GUI.color = Color.yellow;
-            EditorGUILayout.HelpBox("At the moment debug settings cannot be saved or loaded", MessageType.Info);
+            EditorGUILayout.HelpBox("At the moment debug settings can neither be saved nor loaded", MessageType.Info);
             GUI.color = normalColor;
             
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);

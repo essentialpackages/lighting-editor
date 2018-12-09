@@ -19,7 +19,7 @@ namespace EssentialPackages.LightingEditor.Editor
         private bool ShowAdditionalInformation { get; set; }
 
         private void OnEnable()
-        {   
+        {
             var environment = serializedObject.FindProperty("_environment");
             var skyboxMaterial = environment.FindPropertyRelative("_skyboxMaterial");
             if (skyboxMaterial.objectReferenceValue == null)
@@ -34,7 +34,7 @@ namespace EssentialPackages.LightingEditor.Editor
         {
             //DrawDefaultInspector();
             EditorGUILayout.BeginVertical();
-            
+
             ShowAdditionalInformation = EditorGUILayout.Foldout(ShowAdditionalInformation, "Tips");
             if (ShowAdditionalInformation)
             {
@@ -57,7 +57,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             var realtimeEnabled = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination").boolValue;
             var bakedEnabled = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination").boolValue;
-                                 
+
             DrawEnvironmentGroup(environment, realtimeEnabled, bakedEnabled);
             DrawRealtimeLightingGroup(realtimeLighting);
             DrawMixedLightingGroup(mixedLighting);
@@ -79,13 +79,13 @@ namespace EssentialPackages.LightingEditor.Editor
                 var mixedLighting = serializedObject.FindProperty("_mixedLighting");
                 var lightmappingSettings = serializedObject.FindProperty("_lightmappingSettings");
                 var debugSettings = serializedObject.FindProperty("_debugSettings");
-                
+
                 var realtimeGlobalIllumination = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination");
-                
+
                 var bakedGlobalIllumination = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination");
                 var lightingMode = mixedLighting.FindPropertyRelative("_lightingMode");
                 var realtimeShadowColor = mixedLighting.FindPropertyRelative("_realtimeShadowColor");
-                
+
                 // TODO UnityCsReference/Editor/Mono/SceneModeWindows/LightingWindowBakeSettings.cs
                 var lightMapper = lightmappingSettings.FindPropertyRelative("_lightmapper");
                 var ambientOcclusion = lightmappingSettings.FindPropertyRelative("_ambientOcclusion");
@@ -119,7 +119,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 var indirectIntensity = lightmappingSettings.FindPropertyRelative("_indirectIntensity");
                 var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
                 var lightmapParameters = lightmappingSettings.FindPropertyRelative("_lightmapParameters");
-                
+
                 // TODO UnityCsReference/Editor/Mono/SettingsWindow/OtherRenderingEditor.cs
                 var otherSettings = serializedObject.FindProperty("_otherSettings");
                 var fog = otherSettings.FindPropertyRelative("_fog");
@@ -133,31 +133,31 @@ namespace EssentialPackages.LightingEditor.Editor
                 var flareFadeSpeed = otherSettings.FindPropertyRelative("_flareFadeSpeed");
                 var flareFadeStrength = otherSettings.FindPropertyRelative("_flareFadeStrength");
                 var spotCookie = otherSettings.FindPropertyRelative("_spotCookie");
-                
+
                 var lightProbeVisualization = debugSettings.FindPropertyRelative("_lightProbeVisualization");
                 var dropdownMenu = lightProbeVisualization.FindPropertyRelative("_dropdownMenu");
                 var displayWeights = lightProbeVisualization.FindPropertyRelative("_displayWeights");
                 var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
                 var autoGenerate = debugSettings.FindPropertyRelative("_autoGenerate");
-                
+
                 environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue = RenderSettings.skybox;
 
                 var source = environmentLighting.FindPropertyRelative("_source");
                 switch (RenderSettings.ambientMode)
                 {
-                        case AmbientMode.Skybox:
-                            source.stringValue = "Skybox";
+                    case AmbientMode.Skybox:
+                        source.stringValue = "Skybox";
                         break;
-                        case AmbientMode.Trilight:
-                            source.stringValue = "Gradient";
+                    case AmbientMode.Trilight:
+                        source.stringValue = "Gradient";
                         break;
-                        case AmbientMode.Flat:
-                            source.stringValue = "Color";
+                    case AmbientMode.Flat:
+                        source.stringValue = "Color";
                         break;
-                        case AmbientMode.Custom:
-                            break;
-                        default:
-                            break;
+                    case AmbientMode.Custom:
+                        break;
+                    default:
+                        break;
                 }
 
                 // Important note No. 1: Because of the serialization of Light components, one cannot set the
@@ -177,7 +177,8 @@ namespace EssentialPackages.LightingEditor.Editor
                 environmentLighting.FindPropertyRelative("_intensityMultiplier").floatValue =
                     RenderSettings.ambientIntensity;
                 environmentLighting.FindPropertyRelative("_skyColor").colorValue = RenderSettings.ambientSkyColor;
-                environmentLighting.FindPropertyRelative("_equatorColor").colorValue = RenderSettings.ambientEquatorColor;
+                environmentLighting.FindPropertyRelative("_equatorColor").colorValue =
+                    RenderSettings.ambientEquatorColor;
                 environmentLighting.FindPropertyRelative("_groundColor").colorValue = RenderSettings.ambientGroundColor;
                 environmentLighting.FindPropertyRelative("_ambientColor").colorValue = RenderSettings.ambientLight;
 
@@ -189,12 +190,13 @@ namespace EssentialPackages.LightingEditor.Editor
                     RenderSettings.customReflection;
                 environmentReflections.FindPropertyRelative("_compression").stringValue =
                     LightmapEditorSettings.reflectionCubemapCompression.ToString();
-                environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue = RenderSettings.reflectionIntensity;
+                environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue =
+                    RenderSettings.reflectionIntensity;
                 environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
 
                 // Realtime Lighting
                 realtimeGlobalIllumination.boolValue = Lightmapping.realtimeGI;
-                
+
                 // Mixed Lighting
                 bakedGlobalIllumination.boolValue = Lightmapping.bakedGI;
                 switch (LightmapEditorSettings.mixedBakeMode)
@@ -212,9 +214,9 @@ namespace EssentialPackages.LightingEditor.Editor
                         lightingMode.stringValue = LightmapEditorSettings.mixedBakeMode.ToString();
                         break;
                 }
-                
+
                 realtimeShadowColor.colorValue = RenderSettings.subtractiveShadowColor;
-                
+
                 // Lightmapping Settings
                 // Important note: Some fields which can be seen in the Lighting Window cannot be accessed via
                 // LightmapEditorSettings or RenderSettings. They are covered in the internal class
@@ -229,24 +231,25 @@ namespace EssentialPackages.LightingEditor.Editor
                 var m2 = t2.GetMethod("GetRenderSettings", BindingFlags.Static | BindingFlags.NonPublic);
                 var o2 = m2.Invoke(null, null) as UnityEngine.Object;
                 var so2 = new SerializedObject(o2);
-                
-                ambientOcclusion.boolValue =  LightmapEditorSettings.enableAmbientOcclusion;
-                prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;;
+
+                ambientOcclusion.boolValue = LightmapEditorSettings.enableAmbientOcclusion;
+                prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;
+                ;
                 directSamples.intValue = LightmapEditorSettings.directSampleCount;
                 indirectSamples.intValue = LightmapEditorSettings.indirectSampleCount;
                 var bou = new[] {"None", "1", "2", "3", "4"};
                 var modes = new[] {"Gaussian", "A-Trous", "None"};
                 bounces.stringValue = bou[LightmapEditorSettings.bounces];
                 filtering.stringValue = LightmapEditorSettings.filteringMode.ToString();
-                directFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeDirect];
+                directFilter.stringValue = modes[(int) LightmapEditorSettings.filterTypeDirect];
                 directRadius.intValue = LightmapEditorSettings.filteringGaussRadiusDirect;
                 directSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaDirect;
                 indirectRadius.intValue = LightmapEditorSettings.filteringGaussRadiusIndirect;
                 indirectSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaIndirect;
-                indirectFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeIndirect];
+                indirectFilter.stringValue = modes[(int) LightmapEditorSettings.filterTypeIndirect];
                 ambientOcclusionRadius.intValue = LightmapEditorSettings.filteringGaussRadiusAO;
                 ambientOcclusionSigma.floatValue = LightmapEditorSettings.filteringAtrousPositionSigmaAO;
-                ambientOcclusionFilter.stringValue = modes[(int)LightmapEditorSettings.filterTypeAO];
+                ambientOcclusionFilter.stringValue = modes[(int) LightmapEditorSettings.filterTypeAO];
                 switch (LightmapEditorSettings.lightmapper)
                 {
                     case LightmapEditorSettings.Lightmapper.Enlighten:
@@ -259,7 +262,7 @@ namespace EssentialPackages.LightingEditor.Editor
                         lightmapper.stringValue = LightmapEditorSettings.lightmapper.ToString();
                         break;
                 }
-                 
+
                 indirectResolution.floatValue = LightmapEditorSettings.realtimeResolution;
                 lightmapResolution.floatValue = LightmapEditorSettings.bakeResolution;
                 lightmapPadding.intValue = LightmapEditorSettings.padding;
@@ -271,7 +274,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 finalGather.boolValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGather").boolValue;
                 rayCount.intValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGatherRayCount").intValue;
                 denoising.boolValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue;
-                
+
                 switch (LightmapEditorSettings.lightmapsMode)
                 {
                     case LightmapsMode.NonDirectional:
@@ -284,11 +287,13 @@ namespace EssentialPackages.LightingEditor.Editor
                         directionalMode.stringValue = LightmapEditorSettings.lightmapsMode.ToString();
                         break;
                 }
+
                 indirectIntensity.floatValue = Lightmapping.indirectOutputScale;
                 albedoBoost.floatValue = Lightmapping.bounceBoost;
-                
+
                 // TODO Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters").objectReferenceValue as LightmapParameters);
-                lightmapParameters.stringValue = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters").objectReferenceValue.ToString().Split()[0];
+                lightmapParameters.stringValue = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters")
+                    .objectReferenceValue.ToString().Split()[0];
 
                 // Other Settings
                 fog.boolValue = RenderSettings.fog;
@@ -307,7 +312,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 /*dropdownMenu.stringValue = (...) UnityEditor.LightProbeVisualization.lightProbeVisualizationMode;
                 displayWeights.boolValue = UnityEditor.LightProbeVisualization.showInterpolationWeights;
                 displayOcclusion.boolValue = UnityEditor.LightProbeVisualization.showOcclusions;*/
-                
+
                 if (Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
                 {
                     autoGenerate.boolValue = true;
@@ -324,8 +329,8 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUI.BeginDisabledGroup(true);
             if (GUILayout.Button("Scriptable Object > Scene Lighting Settings"))
             {
-                
             }
+
             EditorGUI.EndDisabledGroup();
         }
 
@@ -335,26 +340,26 @@ namespace EssentialPackages.LightingEditor.Editor
             var environmentReflections = property.FindPropertyRelative("_environmentReflections");
             var skyboxMaterial = property.FindPropertyRelative("_skyboxMaterial");
             var sunSource = property.FindPropertyRelative("_sunSource");
- 
+
             BeginGroup(property.name, EditorStyles.boldLabel);
-            
+
             Inspector.DrawPropertyField(skyboxMaterial);
-            
+
             // Important note: Because of the serialization of Light components, one cannot set
             // property.FindPropertyRelative("_sunSource").objectReferenceValue
             TargetScript.Environment.SunSource = EditorGUILayout.ObjectField(
                 ObjectNames.NicifyVariableName(sunSource.name),
                 TargetScript.Environment.SunSource,
-                typeof (Light),
+                typeof(Light),
                 true,
                 GUILayout.Width(EditorGUIUtility.currentViewWidth - 120)
             ) as Light;
 
             EditorGUILayout.Space();
-            
+
             BeginGroup(environmentLighting.name, EditorStyles.label);
             DrawEnvironmentLighting(environmentLighting, realtimeEnabled, bakedEnabled);
-            
+
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
 
@@ -364,7 +369,8 @@ namespace EssentialPackages.LightingEditor.Editor
             EndGroup();
         }
 
-        private static void DrawEnvironmentLighting(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
+        private static void DrawEnvironmentLighting(SerializedProperty property, bool realtimeEnabled,
+            bool bakedEnabled)
         {
             var source = property.FindPropertyRelative("_source");
             var intensityMultiplier = property.FindPropertyRelative("_intensityMultiplier");
@@ -373,23 +379,20 @@ namespace EssentialPackages.LightingEditor.Editor
             var groundColor = property.FindPropertyRelative("_groundColor");
             var ambientColor = property.FindPropertyRelative("_ambientColor");
             var ambientMode = property.FindPropertyRelative("_ambientMode");
-            
-            Action skyboxSelected = () => {
-                Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 8.0f); 
-            };
-            
-            Action gradientSelected = () => {
+
+            Action skyboxSelected = () => { Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 8.0f); };
+
+            Action gradientSelected = () =>
+            {
                 Inspector.DrawPropertyField(skyColor);
                 Inspector.DrawPropertyField(equatorColor);
                 Inspector.DrawPropertyField(groundColor);
             };
 
-            Action colorSelected = () => {
-                Inspector.DrawPropertyField(ambientColor);
-            };
-            
-            Inspector.DrawPopupGroup(source, new [] {"Skybox", "Gradient", "Color"});
-            
+            Action colorSelected = () => { Inspector.DrawPropertyField(ambientColor); };
+
+            Inspector.DrawPopupGroup(source, new[] {"Skybox", "Gradient", "Color"});
+
             switch (source.stringValue)
             {
                 case "Skybox":
@@ -412,6 +415,7 @@ namespace EssentialPackages.LightingEditor.Editor
             {
                 return;
             }
+
             if (realtimeEnabled && !bakedEnabled)
             {
                 ambientMode.stringValue = "Realtime";
@@ -420,9 +424,9 @@ namespace EssentialPackages.LightingEditor.Editor
             {
                 ambientMode.stringValue = "Baked";
             }
-            
+
             EditorGUI.BeginDisabledGroup(!realtimeEnabled || !bakedEnabled);
-            Inspector.DrawPopupGroup(ambientMode, new [] {"Realtime", "Baked"});
+            Inspector.DrawPopupGroup(ambientMode, new[] {"Realtime", "Baked"});
             EditorGUI.EndDisabledGroup();
         }
 
@@ -434,17 +438,16 @@ namespace EssentialPackages.LightingEditor.Editor
             var compression = property.FindPropertyRelative("_compression");
             var intensityMultiplier = property.FindPropertyRelative("_intensityMultiplier");
             var bounces = property.FindPropertyRelative("_bounces");
-            
-            Action addFieldsForSkyboxNo2 = () => {
-                Inspector.DrawPopupGroup(resolution, new [] {"16", "32", "64", "128", "256", "512", "1024", "2048"});
+
+            Action addFieldsForSkyboxNo2 = () =>
+            {
+                Inspector.DrawPopupGroup(resolution, new[] {"16", "32", "64", "128", "256", "512", "1024", "2048"});
             };
-            
-            Action addFieldsForCustom = () => {
-                Inspector.DrawPropertyField(cubemap);
-            };
-            
-            Inspector.DrawPopupGroup(source, new [] {"Skybox", "Custom"});
-            
+
+            Action addFieldsForCustom = () => { Inspector.DrawPropertyField(cubemap); };
+
+            Inspector.DrawPopupGroup(source, new[] {"Skybox", "Custom"});
+
             switch (source.stringValue)
             {
                 case "Skybox":
@@ -459,7 +462,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     break;
             }
 
-            Inspector.DrawPopupGroup(compression, new [] {"Uncompressed", "Compressed", "Auto"});
+            Inspector.DrawPopupGroup(compression, new[] {"Uncompressed", "Compressed", "Auto"});
             Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 1.0f);
             Inspector.DrawIntSlider(bounces, 1, 5);
         }
@@ -467,9 +470,9 @@ namespace EssentialPackages.LightingEditor.Editor
         private static void DrawRealtimeLightingGroup(SerializedProperty property)
         {
             BeginGroup(property.name, EditorStyles.boldLabel);
-            
+
             Inspector.DrawCheckbox(property.FindPropertyRelative("_realtimeGlobalIllumination"));
-            
+
             EndGroup();
         }
 
@@ -478,23 +481,25 @@ namespace EssentialPackages.LightingEditor.Editor
             var bakedGlobalIllumination = property.FindPropertyRelative("_bakedGlobalIllumination");
             var lightingMode = property.FindPropertyRelative("_lightingMode");
             var realtimeShadowColor = property.FindPropertyRelative("_realtimeShadowColor");
-            
+
             BeginGroup(property.name, EditorStyles.boldLabel);
 
             Inspector.DrawCheckbox(bakedGlobalIllumination);
 
             EditorGUI.BeginDisabledGroup(!bakedGlobalIllumination.boolValue);
-            Inspector.DrawPopupGroup(lightingMode, new [] {"Baked Indirect", "Subtractive", "Shadowmask"});
+            Inspector.DrawPopupGroup(lightingMode, new[] {"Baked Indirect", "Subtractive", "Shadowmask"});
             if (lightingMode.stringValue == "Subtractive")
             {
                 Inspector.DrawPropertyField(realtimeShadowColor);
             }
+
             EditorGUI.EndDisabledGroup();
 
             EndGroup();
         }
 
-        private static void DrawLightmappingSettings(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)
+        private static void DrawLightmappingSettings(SerializedProperty property, bool realtimeEnabled,
+            bool bakedEnabled)
         {
             var lightMapper = property.FindPropertyRelative("_lightmapper");
             var ambientOcclusion = property.FindPropertyRelative("_ambientOcclusion");
@@ -528,38 +533,20 @@ namespace EssentialPackages.LightingEditor.Editor
             var indirectIntensity = property.FindPropertyRelative("_indirectIntensity");
             var albedoBoost = property.FindPropertyRelative("_albedoBoost");
             var lightmapParameters = property.FindPropertyRelative("_lightmapParameters");
-            
+
             BeginGroup(property.name, EditorStyles.boldLabel);
 
-            Action drawDirectRadius = () =>
-            {
-                Inspector.DrawIntSlider(directRadius, 0, 5);
-            };
+            Action drawDirectRadius = () => { Inspector.DrawIntSlider(directRadius, 0, 5); };
 
-            Action drawDirectSigma = () =>
-            {
-                Inspector.DrawFloatSlider(directSigma, 0.0f, 2.0f);
-            };
-                
-            Action drawIndirectRadius = () =>
-            {
-                Inspector.DrawIntSlider(indirectRadius, 0, 5);
-            };
-                    
-            Action drawInirectSigma = () =>
-            {
-                Inspector.DrawFloatSlider(indirectSigma, 0.0f, 2.0f);
-            };
-            
-            Action drawAmbientOcclusionRadius = () =>
-            {
-                Inspector.DrawIntSlider(ambientOcclusionRadius, 0, 5);
-            };
-                    
-            Action drawAmbientOcclusionSigma = () =>
-            {
-                Inspector.DrawFloatSlider(ambientOcclusionSigma, 0.0f, 2.0f);
-            };
+            Action drawDirectSigma = () => { Inspector.DrawFloatSlider(directSigma, 0.0f, 2.0f); };
+
+            Action drawIndirectRadius = () => { Inspector.DrawIntSlider(indirectRadius, 0, 5); };
+
+            Action drawInirectSigma = () => { Inspector.DrawFloatSlider(indirectSigma, 0.0f, 2.0f); };
+
+            Action drawAmbientOcclusionRadius = () => { Inspector.DrawIntSlider(ambientOcclusionRadius, 0, 5); };
+
+            Action drawAmbientOcclusionSigma = () => { Inspector.DrawFloatSlider(ambientOcclusionSigma, 0.0f, 2.0f); };
 
             Action drawExtraFields = () =>
             {
@@ -592,7 +579,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     }
 
                     Inspector.DrawPopupGroup(indirectFilter, new[] {"Gaussian", "A-Trous", "None"});
-                    
+
                     switch (indirectFilter.stringValue)
                     {
                         case "Gaussian":
@@ -610,7 +597,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     }
 
                     EditorGUI.BeginDisabledGroup(!ambientOcclusion.boolValue);
-                    
+
                     Inspector.DrawPopupGroup(ambientOcclusionFilter, new[] {"Gaussian", "A-Trous", "None"});
 
                     switch (ambientOcclusionFilter.stringValue)
@@ -628,6 +615,7 @@ namespace EssentialPackages.LightingEditor.Editor
                             drawAmbientOcclusionSigma();
                             break;
                     }
+
                     EditorGUI.EndDisabledGroup();
                 };
 
@@ -641,25 +629,26 @@ namespace EssentialPackages.LightingEditor.Editor
             };
 
             EditorGUI.BeginDisabledGroup(!bakedEnabled);
-            
-            Inspector.DrawPopupGroup(lightmapper, new [] {"Enlighten", "Progressive"});
-            
+
+            Inspector.DrawPopupGroup(lightmapper, new[] {"Enlighten", "Progressive"});
+
             if (lightmapper.stringValue != "Enlighten")
             {
-                drawExtraFields();  
+                drawExtraFields();
             }
+
             EditorGUI.EndDisabledGroup();
-            
+
             EditorGUI.BeginDisabledGroup(!realtimeEnabled);
             Inspector.DrawFloatField(indirectResolution);
             EditorGUI.EndDisabledGroup();
-            
+
             EditorGUI.BeginDisabledGroup(!bakedEnabled);
             Inspector.DrawFloatField(lightmapResolution);
             Inspector.DrawIntField(lightmapPadding);
-            Inspector.DrawPopupGroup(lightmapSize, new [] {"32", "64", "128", "256", "512", "1024", "2048", "4096"});
+            Inspector.DrawPopupGroup(lightmapSize, new[] {"32", "64", "128", "256", "512", "1024", "2048", "4096"});
             Inspector.DrawCheckbox(compressLightmaps);
-            
+
             Inspector.DrawCheckbox(ambientOcclusion);
 
             if (ambientOcclusion.boolValue)
@@ -682,14 +671,18 @@ namespace EssentialPackages.LightingEditor.Editor
             }
 
             EditorGUI.EndDisabledGroup();
-            
+
             EditorGUI.BeginDisabledGroup(!realtimeEnabled && !bakedEnabled);
-            Inspector.DrawPopupGroup(directionalMode, new [] {"Non-Directional", "Directional"});
+            Inspector.DrawPopupGroup(directionalMode, new[] {"Non-Directional", "Directional"});
             Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
             Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);
             Inspector.DrawPopupGroup(
                 lightmapParameters,
-                new [] {"Default-Medium", "Default-HighResolution", "Default-LowResolution", "Default-VeryLowResolution", "Create New ..."}
+                new[]
+                {
+                    "Default-Medium", "Default-HighResolution", "Default-LowResolution", "Default-VeryLowResolution",
+                    "Create New ..."
+                }
             );
             EditorGUI.EndDisabledGroup();
 
@@ -709,17 +702,15 @@ namespace EssentialPackages.LightingEditor.Editor
             var flareFadeSpeed = property.FindPropertyRelative("_flareFadeSpeed");
             var flareFadeStrength = property.FindPropertyRelative("_flareFadeStrength");
             var spotCookie = property.FindPropertyRelative("_spotCookie");
-            
-            Action addFieldsForLinearMode = () => {
+
+            Action addFieldsForLinearMode = () =>
+            {
                 Inspector.DrawFloatField(start);
                 Inspector.DrawFloatField(end);
             };
 
-            Action addFieldsForExponentialMode = () =>
-            {
-                Inspector.DrawFloatField(density);
-            };
-            
+            Action addFieldsForExponentialMode = () => { Inspector.DrawFloatField(density); };
+
             BeginGroup(property.name, EditorStyles.boldLabel);
 
             Inspector.DrawCheckbox(fog);
@@ -731,18 +722,18 @@ namespace EssentialPackages.LightingEditor.Editor
 
                 Inspector.DrawPopupGroup(
                     mode,
-                    new [] {"Linear", "Exponential", "Exponential Squared"}
+                    new[] {"Linear", "Exponential", "Exponential Squared"}
                 );
 
                 switch (mode.stringValue)
                 {
-                    case  "Linear":
+                    case "Linear":
                         addFieldsForLinearMode();
                         break;
-                    case  "Exponential":
+                    case "Exponential":
                         addFieldsForExponentialMode();
                         break;
-                    case  "Exponential Squared":
+                    case "Exponential Squared":
                         addFieldsForExponentialMode();
                         break;
                     default:
@@ -750,10 +741,10 @@ namespace EssentialPackages.LightingEditor.Editor
                         addFieldsForExponentialMode();
                         break;
                 }
-                
+
                 EditorGUI.indentLevel--;
             }
-            
+
             Inspector.DrawPropertyField(haloTexture);
             Inspector.DrawFloatSlider(haloStrength, 0.0f, 1.0f);
             Inspector.DrawFloatField(flareFadeSpeed);
@@ -770,31 +761,31 @@ namespace EssentialPackages.LightingEditor.Editor
             var displayWeights = lightProbeVisualization.FindPropertyRelative("_displayWeights");
             var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
             var autoGenerate = property.FindPropertyRelative("_autoGenerate");
-            
+
             BeginGroup(property.name, EditorStyles.boldLabel);
 
             var normalColor = GUI.color;
             GUI.color = Color.yellow;
             EditorGUILayout.HelpBox("At the moment debug settings can neither be saved nor loaded", MessageType.Info);
             GUI.color = normalColor;
-            
+
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);
 
             Inspector.DrawPopupGroup(
                 dropdownMenu,
-                new []{"Only Probes Used By Selection", "All Probes No Cells", "All Probes With Cells", "None"},
+                new[] {"Only Probes Used By Selection", "All Probes No Cells", "All Probes With Cells", "None"},
                 false
             );
             Inspector.DrawCheckbox(displayWeights);
             Inspector.DrawCheckbox(displayOcclusion);
 
             EditorGUI.indentLevel--;
-            
+
             EditorGUILayout.Space();
             EditorGUILayout.Space();
-            
+
             Inspector.DrawHorizontalLine();
-            
+
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             Inspector.DrawCheckboxLeft(autoGenerate);

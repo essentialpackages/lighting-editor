@@ -43,22 +43,9 @@ namespace EssentialPackages.LightingEditor.Editor
             showAdditionalInformation = EditorGUILayout.Foldout(showAdditionalInformation, "Tips");
             if (showAdditionalInformation)
             {
-                EditorGUILayout.HelpBox("This scriptable object enables developers to version specific lighting settings."+
-                                        "It can be used to transfer lighting settings to other scenes as well as to" +
-                                        " create design guidelines."
-                    , MessageType.Info);
-                EditorGUILayout.HelpBox("Unless there are many scenes with the same lighting settings," +
-                                        " developers should always create one instance per scene inside an Editor folder." +
-                                        " Ideally choose a name for the scriptable object which is similar to the name of" +
-                                        " the corresponding scene."
-                    , MessageType.Info);
-                EditorGUILayout.HelpBox(
-                    "Active values of dropdown menus (inside the scene lighting window) are stored as" +
-                    " strings (inside the scriptable object). This will assure that settings are not" +
-                    " accidentally changed when upgrading Unity to a version, having different" +
-                    " enumerations. But this does also mean, that developers should check all" +
-                    " instances previously created, when upgrading Unity/project."
-                    , MessageType.Info);
+                EditorGUILayout.HelpBox(HelpMessage.Summary, MessageType.Info);
+                EditorGUILayout.HelpBox(HelpMessage.Advice, MessageType.Info);
+                EditorGUILayout.HelpBox(HelpMessage.Footnote, MessageType.Info);
             }
 
             SaveRenderSettings();

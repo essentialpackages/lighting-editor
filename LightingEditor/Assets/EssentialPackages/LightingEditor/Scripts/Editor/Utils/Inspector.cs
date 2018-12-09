@@ -93,9 +93,10 @@ namespace EssentialPackages.LightingEditor.Editor.Utils
 
             var index = Array.FindIndex(choice, element => element == text);
             
-            GUI.backgroundColor = (index == -1) ? Color.red : Color.white;
+            var normalColor = GUI.backgroundColor;
+            GUI.backgroundColor = (index == -1) ? Color.red : normalColor;
             var value = EditorGUILayout.Popup(index, choice, GUILayout.Width(100));
-            GUI.backgroundColor = Color.white;
+            GUI.backgroundColor = normalColor;
 
             if (value != -1)
             {

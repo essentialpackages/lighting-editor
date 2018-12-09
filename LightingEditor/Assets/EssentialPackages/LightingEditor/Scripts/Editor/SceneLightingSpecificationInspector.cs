@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using EssentialPackages.LightingEditor.Editor.Classes;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
 using UnityEditor.Compilation;
@@ -74,12 +75,13 @@ namespace EssentialPackages.LightingEditor.Editor
                 var lightmappingSettings = serializedObject.FindProperty("_lightmappingSettings");
                 var debugSettings = serializedObject.FindProperty("_debugSettings");
                 
-                var _realtimeGlobalIllumination = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination");
+                var realtimeGlobalIllumination = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination");
                 
                 var bakedGlobalIllumination = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination");
                 var lightingMode = mixedLighting.FindPropertyRelative("_lightingMode");
                 var realtimeShadowColor = mixedLighting.FindPropertyRelative("_realtimeShadowColor");
                 
+                // TODO UnityCsReference/Editor/Mono/SceneModeWindows/LightingWindowBakeSettings.cs
                 var lightMapper = lightmappingSettings.FindPropertyRelative("_lightmapper");
                 var ambientOcclusion = lightmappingSettings.FindPropertyRelative("_ambientOcclusion");
                 var finalGather = lightmappingSettings.FindPropertyRelative("_finalGather");
@@ -113,6 +115,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
                 var lightmapParameters = lightmappingSettings.FindPropertyRelative("_lightmapParameters");
                 
+                // TODO UnityCsReference/Editor/Mono/SettingsWindow/OtherRenderingEditor.cs
                 var otherSettings = serializedObject.FindProperty("_otherSettings");
                 var fog = otherSettings.FindPropertyRelative("_fog");
                 var color = otherSettings.FindPropertyRelative("_color");
@@ -185,7 +188,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 environmentReflections.FindPropertyRelative("_bounces").intValue = RenderSettings.reflectionBounces;
 
                 // Realtime Lighting
-                _realtimeGlobalIllumination.boolValue = Lightmapping.realtimeGI;
+                realtimeGlobalIllumination.boolValue = Lightmapping.realtimeGI;
                 
                 // Mixed Lighting
                 bakedGlobalIllumination.boolValue = Lightmapping.bakedGI;
@@ -296,10 +299,10 @@ namespace EssentialPackages.LightingEditor.Editor
                 spotCookie.objectReferenceValue = so2.FindProperty("m_SpotCookie").objectReferenceValue;
 
                 // Debug Settings
-                /*var type = typeof(UnityEditor.Refl);
-                dropdownMenu.stringValue = RenderSettings.;
-                displayWeights.boolValue = ;
-                displayOcclusion.boolValue = ReflectionProbeEditor.m_UseOcclusionCulling;*/
+                /*dropdownMenu.stringValue = (...) UnityEditor.LightProbeVisualization.lightProbeVisualizationMode;
+                displayWeights.boolValue = UnityEditor.LightProbeVisualization.showInterpolationWeights;
+                displayOcclusion.boolValue = UnityEditor.LightProbeVisualization.showOcclusions;*/
+                
                 if (Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
                 {
                     autoGenerate.boolValue = true;
@@ -308,16 +311,6 @@ namespace EssentialPackages.LightingEditor.Editor
                 {
                     autoGenerate.boolValue = false;
                 }
-
-                /*                
-                RenderSettings.ambientProbe;
-                RenderSettings.ambientSkyboxAmount; // obsolete
-                
-
-                LightmapEditorSettings.quality;
-
-                LightmapEditorSettings.sampling;
-                */
             }
         }
 
@@ -772,6 +765,11 @@ namespace EssentialPackages.LightingEditor.Editor
             var autoGenerate = property.FindPropertyRelative("_autoGenerate");
             
             BeginGroup(property.name, EditorStyles.boldLabel);
+
+            var normalColor = GUI.color;
+            GUI.color = Color.yellow;
+            EditorGUILayout.HelpBox("At the moment debug settings cannot be saved or loaded", MessageType.Info);
+            GUI.color = normalColor;
             
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);
 
@@ -788,7 +786,17 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             
-            Inspector.DrawCheckbox(autoGenerate);
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            
+            //Inspector.DrawCheckbox(autoGenerate);
+            EditorGUILayout.BeginHorizontal();
+
+            GUILayout.FlexibleSpace();
+            autoGenerate.boolValue = EditorGUILayout.ToggleLeft(
+                ObjectNames.NicifyVariableName(autoGenerate.name),
+                autoGenerate.boolValue
+            );
+            EditorGUILayout.EndHorizontal();
         }
 
         private static void BeginGroup(string header, GUIStyle guiStyle)

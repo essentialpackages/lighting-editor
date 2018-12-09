@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
+using Assembly = System.Reflection.Assembly;
 
 namespace EssentialPackages.LightingEditor.Editor
 {
@@ -79,6 +83,8 @@ namespace EssentialPackages.LightingEditor.Editor
                 var lightMapper = lightmappingSettings.FindPropertyRelative("_lightmapper");
                 var ambientOcclusion = lightmappingSettings.FindPropertyRelative("_ambientOcclusion");
                 var finalGather = lightmappingSettings.FindPropertyRelative("_finalGather");
+                var rayCount = lightmappingSettings.FindPropertyRelative("_rayCount");
+                var denoising = lightmappingSettings.FindPropertyRelative("_denoising");
                 var prioritizeView = lightMapper.FindPropertyRelative("_prioritizeView");
                 var directSamples = lightMapper.FindPropertyRelative("_directSamples");
                 var indirectSamples = lightMapper.FindPropertyRelative("_indirectSamples");
@@ -102,8 +108,6 @@ namespace EssentialPackages.LightingEditor.Editor
                 var maxDistance = lightmappingSettings.FindPropertyRelative("_maxDistance");
                 var indirectContribution = lightmappingSettings.FindPropertyRelative("_indirectContribution");
                 var directContribution = lightmappingSettings.FindPropertyRelative("_directContribution");
-                var rayCount = lightmappingSettings.FindPropertyRelative("_rayCount");
-                var denoising = lightmappingSettings.FindPropertyRelative("_denoising");
                 var directionalMode = lightmappingSettings.FindPropertyRelative("_directionalMode");
                 var indirectIntensity = lightmappingSettings.FindPropertyRelative("_indirectIntensity");
                 var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
@@ -204,6 +208,15 @@ namespace EssentialPackages.LightingEditor.Editor
                 realtimeShadowColor.colorValue = RenderSettings.subtractiveShadowColor;
                 
                 // Lightmapping Settings
+                // Important note: Some fields which can be seen in the Lighting Window cannot be accessed via
+                // LightmapEditorSettings or RenderSettings. They are covered in the internal class
+                // LightingWindowBakeSettings. To get access, use Reflections to invoke the private method
+                // GetLightmapSettings. Make sure you receive a UnityEngine.Object. Finally create a temporary
+                // SerializedObject and work with FindProperty to get access to the missing fields.
+                var t = typeof(LightmapEditorSettings);
+                var m = t.GetMethod("GetLightmapSettings", BindingFlags.Static  | BindingFlags.NonPublic);
+                var o = m.Invoke(null, null) as UnityEngine.Object;
+                var so = new SerializedObject(o);
 
                 ambientOcclusion.boolValue =  LightmapEditorSettings.enableAmbientOcclusion;
                 prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;;
@@ -243,7 +256,10 @@ namespace EssentialPackages.LightingEditor.Editor
                 maxDistance.floatValue = LightmapEditorSettings.aoMaxDistance;
                 indirectContribution.floatValue = LightmapEditorSettings.aoExponentIndirect;
                 directContribution.floatValue = LightmapEditorSettings.aoExponentDirect;
-                /*finalGather  = ;*/
+                finalGather.boolValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGather").boolValue;
+                rayCount.intValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGatherRayCount").intValue;
+                denoising.boolValue = so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue;
+                
                 switch (LightmapEditorSettings.lightmapsMode)
                 {
                     case LightmapsMode.NonDirectional:
@@ -260,8 +276,6 @@ namespace EssentialPackages.LightingEditor.Editor
                 albedoBoost.floatValue = Lightmapping.bounceBoost;
                 // lightmapParameters = ;
 
-                //Debug.Log(Lightmapping.);
-                
                 // Other Settings
                 fog.boolValue = RenderSettings.fog;
                 color.colorValue = RenderSettings.fogColor;

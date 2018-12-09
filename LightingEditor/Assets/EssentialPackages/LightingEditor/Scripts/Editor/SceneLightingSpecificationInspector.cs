@@ -214,10 +214,14 @@ namespace EssentialPackages.LightingEditor.Editor
                 // GetLightmapSettings. Make sure you receive a UnityEngine.Object. Finally create a temporary
                 // SerializedObject and work with FindProperty to get access to the missing fields.
                 var t = typeof(LightmapEditorSettings);
-                var m = t.GetMethod("GetLightmapSettings", BindingFlags.Static  | BindingFlags.NonPublic);
+                var m = t.GetMethod("GetLightmapSettings", BindingFlags.Static | BindingFlags.NonPublic);
                 var o = m.Invoke(null, null) as UnityEngine.Object;
                 var so = new SerializedObject(o);
-
+                var t2 = typeof(RenderSettings);
+                var m2 = t2.GetMethod("GetRenderSettings", BindingFlags.Static | BindingFlags.NonPublic);
+                var o2 = m2.Invoke(null, null) as UnityEngine.Object;
+                var so2 = new SerializedObject(o2);
+                
                 ambientOcclusion.boolValue =  LightmapEditorSettings.enableAmbientOcclusion;
                 prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;;
                 directSamples.intValue = LightmapEditorSettings.directSampleCount;
@@ -285,12 +289,12 @@ namespace EssentialPackages.LightingEditor.Editor
                 start.floatValue = RenderSettings.fogStartDistance;
                 end.floatValue = RenderSettings.fogEndDistance;
                 density.floatValue = RenderSettings.fogDensity;
-                //haloTexture.objectReferenceValue
+                haloTexture.objectReferenceValue = so2.FindProperty("m_HaloTexture").objectReferenceValue;
                 haloStrength.floatValue = RenderSettings.haloStrength;
                 flareFadeSpeed.floatValue = RenderSettings.flareFadeSpeed;
                 flareFadeStrength.floatValue = RenderSettings.flareStrength;
-                // spotCookie.objectReferenceValue
-                
+                spotCookie.objectReferenceValue = so2.FindProperty("m_SpotCookie").objectReferenceValue;
+
                 // Debug Settings
                 /*var type = typeof(UnityEditor.Refl);
                 dropdownMenu.stringValue = RenderSettings.;

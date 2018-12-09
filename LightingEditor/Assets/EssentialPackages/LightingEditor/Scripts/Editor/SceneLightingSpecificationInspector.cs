@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
-using EssentialPackages.LightingEditor.Editor.Classes;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
-using UnityEditor.Compilation;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
-using Assembly = System.Reflection.Assembly;
 
 namespace EssentialPackages.LightingEditor.Editor
 {
@@ -21,8 +16,8 @@ namespace EssentialPackages.LightingEditor.Editor
     public class SceneLightingSpecificationInspector : UnityEditor.Editor
     {
         private SceneLightingSpecification TargetScript { get; set; }
-        private bool showAdditionalInformation = false;
-        
+        private bool ShowAdditionalInformation { get; set; }
+
         private void OnEnable()
         {   
             var environment = serializedObject.FindProperty("_environment");
@@ -40,8 +35,8 @@ namespace EssentialPackages.LightingEditor.Editor
             //DrawDefaultInspector();
             EditorGUILayout.BeginVertical();
             
-            showAdditionalInformation = EditorGUILayout.Foldout(showAdditionalInformation, "Tips");
-            if (showAdditionalInformation)
+            ShowAdditionalInformation = EditorGUILayout.Foldout(ShowAdditionalInformation, "Tips");
+            if (ShowAdditionalInformation)
             {
                 EditorGUILayout.HelpBox(HelpMessage.Summary, MessageType.Info);
                 EditorGUILayout.HelpBox(HelpMessage.Advice, MessageType.Info);

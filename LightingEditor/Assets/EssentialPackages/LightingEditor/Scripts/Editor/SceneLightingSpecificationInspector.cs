@@ -274,7 +274,9 @@ namespace EssentialPackages.LightingEditor.Editor
                 }
                 indirectIntensity.floatValue = Lightmapping.indirectOutputScale;
                 albedoBoost.floatValue = Lightmapping.bounceBoost;
-                // lightmapParameters = ;
+                
+                // TODO Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters").objectReferenceValue as LightmapParameters);
+                lightmapParameters.stringValue = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters").objectReferenceValue.ToString().Split()[0];
 
                 // Other Settings
                 fog.boolValue = RenderSettings.fog;
@@ -288,7 +290,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 flareFadeSpeed.floatValue = RenderSettings.flareFadeSpeed;
                 flareFadeStrength.floatValue = RenderSettings.flareStrength;
                 // spotCookie.objectReferenceValue
-
+                
                 // Debug Settings
                 /*var type = typeof(UnityEditor.Refl);
                 dropdownMenu.stringValue = RenderSettings.;

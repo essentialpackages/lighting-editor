@@ -376,6 +376,26 @@ namespace EssentialPackages.LightingEditor.Editor
                 var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
                 var lightmapParameters = lightmappingSettings.FindPropertyRelative("_lightmapParameters");
                 
+                // TODO UnityCsReference/Editor/Mono/SettingsWindow/OtherRenderingEditor.cs
+                var otherSettings = serializedObject.FindProperty("_otherSettings");
+                var fog = otherSettings.FindPropertyRelative("_fog");
+                var color = otherSettings.FindPropertyRelative("_color");
+                var mode = otherSettings.FindPropertyRelative("_mode");
+                var start = otherSettings.FindPropertyRelative("_start");
+                var end = otherSettings.FindPropertyRelative("_end");
+                var density = otherSettings.FindPropertyRelative("_density");
+                var haloTexture = otherSettings.FindPropertyRelative("_haloTexture");
+                var haloStrength = otherSettings.FindPropertyRelative("_haloStrength");
+                var flareFadeSpeed = otherSettings.FindPropertyRelative("_flareFadeSpeed");
+                var flareFadeStrength = otherSettings.FindPropertyRelative("_flareFadeStrength");
+                var spotCookie = otherSettings.FindPropertyRelative("_spotCookie");
+
+                var lightProbeVisualization = debugSettings.FindPropertyRelative("_lightProbeVisualization");
+                var dropdownMenu = lightProbeVisualization.FindPropertyRelative("_dropdownMenu");
+                var displayWeights = lightProbeVisualization.FindPropertyRelative("_displayWeights");
+                var displayOcclusion = lightProbeVisualization.FindPropertyRelative("_displayOcclusion");
+                var autoGenerate = debugSettings.FindPropertyRelative("_autoGenerate");
+                
                 RenderSettings.skybox = environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue as Material;
                 RenderSettings.sun = TargetScript.Environment.SunSource;
                 
@@ -700,6 +720,48 @@ namespace EssentialPackages.LightingEditor.Editor
                     default:
                         // TODO show info
                         break;
+                }
+                
+                // Other Settings
+                RenderSettings.fog = fog.boolValue;
+                RenderSettings.fogColor = color.colorValue;
+                switch (mode.stringValue)
+                {
+                    case "Linear":
+                        RenderSettings.fogMode = FogMode.Linear;
+                        break;
+                    case "Exponential":
+                        RenderSettings.fogMode = FogMode.Exponential;
+                        break;
+                    case "Exponential Squared":
+                        RenderSettings.fogMode = FogMode.ExponentialSquared;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                RenderSettings.fogStartDistance = start.floatValue;
+                RenderSettings.fogEndDistance = end.floatValue;
+                RenderSettings.fogDensity = density.floatValue;
+                so2.FindProperty("m_HaloTexture").objectReferenceValue = haloTexture.objectReferenceValue;
+                RenderSettings.haloStrength = haloStrength.floatValue;
+                RenderSettings.flareFadeSpeed = flareFadeSpeed.floatValue;
+                RenderSettings.flareStrength = flareFadeStrength.floatValue;
+                so2.FindProperty("m_SpotCookie").objectReferenceValue = spotCookie.objectReferenceValue;
+
+                // Debug Settings
+                /*dropdownMenu.stringValue = (...) UnityEditor.LightProbeVisualization.lightProbeVisualizationMode;
+                displayWeights.boolValue = UnityEditor.LightProbeVisualization.showInterpolationWeights;
+                displayOcclusion.boolValue = UnityEditor.LightProbeVisualization.showOcclusions;*/
+
+                if (autoGenerate.boolValue)
+                {
+                    Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
+                    
+                }
+                else
+                {
+                    Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
                 }
             }
         }

@@ -342,6 +342,40 @@ namespace EssentialPackages.LightingEditor.Editor
                 var lightingMode = mixedLighting.FindPropertyRelative("_lightingMode");
                 var realtimeShadowColor = mixedLighting.FindPropertyRelative("_realtimeShadowColor");
                 
+                // TODO UnityCsReference/Editor/Mono/SceneModeWindows/LightingWindowBakeSettings.cs
+                var lightMapper = lightmappingSettings.FindPropertyRelative("_lightmapper");
+                var ambientOcclusion = lightmappingSettings.FindPropertyRelative("_ambientOcclusion");
+                var finalGather = lightmappingSettings.FindPropertyRelative("_finalGather");
+                var rayCount = lightmappingSettings.FindPropertyRelative("_rayCount");
+                var denoising = lightmappingSettings.FindPropertyRelative("_denoising");
+                var prioritizeView = lightMapper.FindPropertyRelative("_prioritizeView");
+                var directSamples = lightMapper.FindPropertyRelative("_directSamples");
+                var indirectSamples = lightMapper.FindPropertyRelative("_indirectSamples");
+                var bounces = lightMapper.FindPropertyRelative("_bounces");
+                var filtering = lightMapper.FindPropertyRelative("_filtering");
+                var directFilter = lightMapper.FindPropertyRelative("_directFilter");
+                var directRadius = lightMapper.FindPropertyRelative("_directRadius");
+                var directSigma = lightMapper.FindPropertyRelative("_directSigma");
+                var indirectRadius = lightMapper.FindPropertyRelative("_indirectRadius");
+                var indirectSigma = lightMapper.FindPropertyRelative("_indirectSigma");
+                var indirectFilter = lightMapper.FindPropertyRelative("_indirectFilter");
+                var ambientOcclusionRadius = lightMapper.FindPropertyRelative("_ambientOcclusionRadius");
+                var ambientOcclusionSigma = lightMapper.FindPropertyRelative("_ambientOcclusionSigma");
+                var ambientOcclusionFilter = lightMapper.FindPropertyRelative("_ambientOcclusionFilter");
+                var lightmapper = lightMapper.FindPropertyRelative("_lightMapper");
+                var indirectResolution = lightmappingSettings.FindPropertyRelative("_indirectResolution");
+                var lightmapResolution = lightmappingSettings.FindPropertyRelative("_lightmapResolution");
+                var lightmapPadding = lightmappingSettings.FindPropertyRelative("_lightmapPadding");
+                var lightmapSize = lightmappingSettings.FindPropertyRelative("_lightmapSize");
+                var compressLightmaps = lightmappingSettings.FindPropertyRelative("_compressLightmaps");
+                var maxDistance = lightmappingSettings.FindPropertyRelative("_maxDistance");
+                var indirectContribution = lightmappingSettings.FindPropertyRelative("_indirectContribution");
+                var directContribution = lightmappingSettings.FindPropertyRelative("_directContribution");
+                var directionalMode = lightmappingSettings.FindPropertyRelative("_directionalMode");
+                var indirectIntensity = lightmappingSettings.FindPropertyRelative("_indirectIntensity");
+                var albedoBoost = lightmappingSettings.FindPropertyRelative("_albedoBoost");
+                var lightmapParameters = lightmappingSettings.FindPropertyRelative("_lightmapParameters");
+                
                 RenderSettings.skybox = environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue as Material;
                 RenderSettings.sun = TargetScript.Environment.SunSource;
                 
@@ -471,6 +505,202 @@ namespace EssentialPackages.LightingEditor.Editor
 
                 // TODO substractive color is not updated
                 RenderSettings.subtractiveShadowColor = realtimeShadowColor.colorValue;
+                
+                
+                // Lightmapping Settings
+                LightmapEditorSettings.enableAmbientOcclusion = ambientOcclusion.boolValue;
+                LightmapEditorSettings.prioritizeView = prioritizeView.boolValue;
+                
+                LightmapEditorSettings.directSampleCount = directSamples.intValue;
+                LightmapEditorSettings.indirectSampleCount = indirectSamples.intValue;
+                switch (bounces.stringValue)
+                {
+                    case "None":
+                        LightmapEditorSettings.bounces = 0;
+                        break;
+                    case "1":
+                        LightmapEditorSettings.bounces = 1;
+                        break;
+                    case "2":
+                        LightmapEditorSettings.bounces = 2;
+                        break;
+                    case "3":
+                        LightmapEditorSettings.bounces = 3;
+                        break;
+                    case "4":
+                        LightmapEditorSettings.bounces = 4;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                switch (filtering.stringValue)
+                {
+                    case "None":
+                        LightmapEditorSettings.filteringMode = LightmapEditorSettings.FilterMode.None;
+                        break;
+                    case "Auto":
+                        LightmapEditorSettings.filteringMode = LightmapEditorSettings.FilterMode.Auto;
+                        break;
+                    case "Advanced":
+                        LightmapEditorSettings.filteringMode = LightmapEditorSettings.FilterMode.Advanced;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                switch (directFilter.stringValue)
+                {
+                    case "Gaussian":
+                        LightmapEditorSettings.filterTypeDirect = LightmapEditorSettings.FilterType.Gaussian;
+                        break;
+                    case "ATrous":
+                        LightmapEditorSettings.filterTypeDirect = LightmapEditorSettings.FilterType.ATrous;
+                        break;
+                    case "None":
+                        LightmapEditorSettings.filterTypeDirect = LightmapEditorSettings.FilterType.None;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                LightmapEditorSettings.filteringGaussRadiusDirect = directRadius.intValue;
+                LightmapEditorSettings.filteringAtrousPositionSigmaDirect = directSigma.floatValue;
+                LightmapEditorSettings.filteringGaussRadiusIndirect = indirectRadius.intValue;
+                LightmapEditorSettings.filteringAtrousPositionSigmaIndirect = indirectSigma.floatValue;
+                switch (indirectFilter.stringValue)
+                {
+                    case "Gaussian":
+                        LightmapEditorSettings.filterTypeIndirect = LightmapEditorSettings.FilterType.Gaussian;
+                        break;
+                    case "ATrous":
+                        LightmapEditorSettings.filterTypeIndirect = LightmapEditorSettings.FilterType.ATrous;
+                        break;
+                    case "None":
+                        LightmapEditorSettings.filterTypeIndirect = LightmapEditorSettings.FilterType.None;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                LightmapEditorSettings.filteringGaussRadiusAO = ambientOcclusionRadius.intValue;
+                LightmapEditorSettings.filteringAtrousPositionSigmaAO = ambientOcclusionSigma.floatValue;
+                switch (ambientOcclusionFilter.stringValue)
+                {
+                    case "Gaussian":
+                        LightmapEditorSettings.filterTypeAO = LightmapEditorSettings.FilterType.Gaussian;
+                        break;
+                    case "ATrous":
+                        LightmapEditorSettings.filterTypeAO = LightmapEditorSettings.FilterType.ATrous;
+                        break;
+                    case "None":
+                        LightmapEditorSettings.filterTypeAO = LightmapEditorSettings.FilterType.None;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                switch (lightmapper.stringValue)
+                {
+                    case "Enlighten":
+                        LightmapEditorSettings.lightmapper = LightmapEditorSettings.Lightmapper.Enlighten;
+                        break;
+                    case "Progressive":
+                        LightmapEditorSettings.lightmapper = LightmapEditorSettings.Lightmapper.ProgressiveCPU;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                
+                LightmapEditorSettings.realtimeResolution = indirectResolution.floatValue;
+                LightmapEditorSettings.bakeResolution = lightmapResolution.floatValue;
+                LightmapEditorSettings.padding = lightmapPadding.intValue;
+                lightmapSize.stringValue = LightmapEditorSettings.maxAtlasSize.ToString();
+                switch (lightmapSize.stringValue)
+                {
+                    case "32":
+                        LightmapEditorSettings.maxAtlasSize = 32;
+                        break;
+                    case "64":
+                        LightmapEditorSettings.maxAtlasSize = 64;
+                        break;
+                    case "128":
+                        LightmapEditorSettings.maxAtlasSize = 128;
+                        break;
+                    case "256":
+                        LightmapEditorSettings.maxAtlasSize = 256;
+                        break;
+                    case "512":
+                        LightmapEditorSettings.maxAtlasSize = 512;
+                        break;
+                    case "1024":
+                        LightmapEditorSettings.maxAtlasSize = 1024;
+                        break;
+                    case "2048":
+                        LightmapEditorSettings.maxAtlasSize = 2048;
+                        break;
+                    case "4096":
+                        LightmapEditorSettings.maxAtlasSize = 4096;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+                LightmapEditorSettings.textureCompression = compressLightmaps.boolValue;
+                LightmapEditorSettings.aoMaxDistance = maxDistance.floatValue;
+                LightmapEditorSettings.aoExponentIndirect = indirectContribution.floatValue;
+                LightmapEditorSettings.aoExponentDirect = directContribution.floatValue;
+                
+                var t = typeof(LightmapEditorSettings);
+                var m = t.GetMethod("GetLightmapSettings", BindingFlags.Static | BindingFlags.NonPublic);
+                var o = m.Invoke(null, null) as UnityEngine.Object;
+                var so = new SerializedObject(o);
+                var t2 = typeof(RenderSettings);
+                var m2 = t2.GetMethod("GetRenderSettings", BindingFlags.Static | BindingFlags.NonPublic);
+                var o2 = m2.Invoke(null, null) as UnityEngine.Object;
+                var so2 = new SerializedObject(o2);
+                
+                so.FindProperty("m_LightmapEditorSettings.m_FinalGather").boolValue = finalGather.boolValue;
+                so.FindProperty("m_LightmapEditorSettings.m_FinalGatherRayCount").intValue = rayCount.intValue;
+                so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue = denoising.boolValue;
+                
+                switch (directionalMode.stringValue)
+                {
+                    case "Non-Directional":
+                        LightmapEditorSettings.lightmapsMode = LightmapsMode.NonDirectional;
+                        break;
+                    case "Directional":
+                        LightmapEditorSettings.lightmapsMode = LightmapsMode.CombinedDirectional;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+
+                Lightmapping.indirectOutputScale = indirectIntensity.floatValue;
+                Lightmapping.bounceBoost = albedoBoost.floatValue;
+                
+                // TODO find value by name?
+                var parameters = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters");
+                switch (lightmapParameters.stringValue)
+                {
+                    case "Default-Medium":
+                        // parameters.objectReferenceValue = ;
+                        break;
+                    case "Default-HighResolution":
+                        // parameters.objectReferenceValue = ;
+                        break;
+                    case "Default-LowResolution":
+                        // parameters.objectReferenceValue = ;
+                        break;
+                    case "Default-VeryLowResolution":
+                        // parameters.objectReferenceValue = ;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
             }
         }
 

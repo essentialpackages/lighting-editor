@@ -234,7 +234,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
                 ambientOcclusion.boolValue = LightmapEditorSettings.enableAmbientOcclusion;
                 prioritizeView.boolValue = LightmapEditorSettings.prioritizeView;
-                ;
+                
                 directSamples.intValue = LightmapEditorSettings.directSampleCount;
                 indirectSamples.intValue = LightmapEditorSettings.indirectSampleCount;
                 var bou = new[] {"None", "1", "2", "3", "4"};
@@ -326,12 +326,120 @@ namespace EssentialPackages.LightingEditor.Editor
 
         private void LoadRenderSettings()
         {
-            EditorGUI.BeginDisabledGroup(true);
             if (GUILayout.Button("Scriptable Object > Scene Lighting Settings"))
             {
-            }
+                var environment = serializedObject.FindProperty("_environment");
+                var environmentLighting = environment.FindPropertyRelative("_environmentLighting");
+                var environmentReflections = environment.FindPropertyRelative("_environmentReflections");
+                var realtimeLighting = serializedObject.FindProperty("_realtimeLighting");
+                var mixedLighting = serializedObject.FindProperty("_mixedLighting");
+                var lightmappingSettings = serializedObject.FindProperty("_lightmappingSettings");
+                var debugSettings = serializedObject.FindProperty("_debugSettings");
+                
+                RenderSettings.skybox = environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue as Material;
+                RenderSettings.sun = TargetScript.Environment.SunSource;
+                
+                // Important note: ambientSkyColor and ambientLight should be set only when the specific mode is selected.
+                // Updating both fields would end in the same color.
+                var source = environmentLighting.FindPropertyRelative("_source");
+                switch (source.stringValue)
+                {
+                    case "Skybox":
+                        source.stringValue = "Skybox";
+                        RenderSettings.ambientMode = AmbientMode.Skybox;
+                        RenderSettings.ambientIntensity =
+                            environmentLighting.FindPropertyRelative("_intensityMultiplier").floatValue;
+                        break;
+                    case "Gradient":
+                        source.stringValue = "Gradient";
+                        RenderSettings.ambientMode = AmbientMode.Trilight;
+                        RenderSettings.ambientSkyColor = environmentLighting.FindPropertyRelative("_skyColor").colorValue;
+                        RenderSettings.ambientEquatorColor =
+                            environmentLighting.FindPropertyRelative("_equatorColor").colorValue;
+                        RenderSettings.ambientGroundColor = environmentLighting.FindPropertyRelative("_groundColor").colorValue;
+                        break;
+                    case "Color":
+                        source.stringValue = "Color";
+                        RenderSettings.ambientMode = AmbientMode.Flat;
+                        RenderSettings.ambientLight = environmentLighting.FindPropertyRelative("_ambientColor").colorValue;
+                        break;
+                    case "Custom":
+                        RenderSettings.ambientMode = AmbientMode.Custom;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
 
-            EditorGUI.EndDisabledGroup();
+                var reflectionSource = environmentReflections.FindPropertyRelative("_source").stringValue;
+                switch (reflectionSource)
+                {
+                    case "Skybox":
+                        RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
+                        break;
+                    case "Custom":
+                        RenderSettings.defaultReflectionMode = DefaultReflectionMode.Custom;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+
+                var resolution = environmentReflections.FindPropertyRelative("_resolution").stringValue;
+                switch (resolution)
+                {
+                    case "16":
+                        RenderSettings.defaultReflectionResolution = 16;
+                        break;
+                    case "32":
+                        RenderSettings.defaultReflectionResolution = 32;
+                        break;
+                    case "64":
+                        RenderSettings.defaultReflectionResolution = 64;
+                        break;
+                    case "128":
+                        RenderSettings.defaultReflectionResolution = 128;
+                        break;
+                    case "256":
+                        RenderSettings.defaultReflectionResolution = 256;
+                        break;
+                    case "512":
+                        RenderSettings.defaultReflectionResolution = 512;
+                        break;
+                    case "1024":
+                        RenderSettings.defaultReflectionResolution = 1024;
+                        break;
+                    case "2048":
+                        RenderSettings.defaultReflectionResolution = 2048;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+
+                RenderSettings.customReflection = environmentReflections.FindPropertyRelative("_cubemap").objectReferenceValue as Cubemap;
+
+                var compression = environmentReflections.FindPropertyRelative("_compression").stringValue;
+                switch (compression)
+                {
+                   case "Uncompressed":
+                       LightmapEditorSettings.reflectionCubemapCompression = ReflectionCubemapCompression.Uncompressed;
+                       break;
+                    case "Compressed":
+                        LightmapEditorSettings.reflectionCubemapCompression = ReflectionCubemapCompression.Compressed;
+                        break;
+                    case "Auto":
+                        LightmapEditorSettings.reflectionCubemapCompression = ReflectionCubemapCompression.Auto;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+
+                RenderSettings.reflectionIntensity =
+                    environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue;
+                RenderSettings.reflectionBounces = environmentReflections.FindPropertyRelative("_bounces").intValue;
+            }
         }
 
         private void DrawEnvironmentGroup(SerializedProperty property, bool realtimeEnabled, bool bakedEnabled)

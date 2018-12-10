@@ -336,6 +336,12 @@ namespace EssentialPackages.LightingEditor.Editor
                 var lightmappingSettings = serializedObject.FindProperty("_lightmappingSettings");
                 var debugSettings = serializedObject.FindProperty("_debugSettings");
                 
+                var realtimeGlobalIllumination = realtimeLighting.FindPropertyRelative("_realtimeGlobalIllumination");
+
+                var bakedGlobalIllumination = mixedLighting.FindPropertyRelative("_bakedGlobalIllumination");
+                var lightingMode = mixedLighting.FindPropertyRelative("_lightingMode");
+                var realtimeShadowColor = mixedLighting.FindPropertyRelative("_realtimeShadowColor");
+                
                 RenderSettings.skybox = environment.FindPropertyRelative("_skyboxMaterial").objectReferenceValue as Material;
                 RenderSettings.sun = TargetScript.Environment.SunSource;
                 
@@ -439,6 +445,32 @@ namespace EssentialPackages.LightingEditor.Editor
                 RenderSettings.reflectionIntensity =
                     environmentReflections.FindPropertyRelative("_intensityMultiplier").floatValue;
                 RenderSettings.reflectionBounces = environmentReflections.FindPropertyRelative("_bounces").intValue;
+                
+                // Realtime Lighting
+                Lightmapping.realtimeGI = realtimeGlobalIllumination.boolValue;
+
+                // Mixed Lighting
+                Lightmapping.bakedGI =  bakedGlobalIllumination.boolValue;
+                
+                // TODO mode is only updated when Lightmapping.bakedGI was changed from false to true
+                switch (lightingMode.stringValue)
+                {
+                    case "Baked Indirect":
+                        LightmapEditorSettings.mixedBakeMode = MixedLightingMode.IndirectOnly;
+                        break;
+                    case "Subtractive":
+                        LightmapEditorSettings.mixedBakeMode = MixedLightingMode.Subtractive;
+                        break;
+                    case "Shadowmask":
+                        LightmapEditorSettings.mixedBakeMode = MixedLightingMode.Shadowmask;
+                        break;
+                    default:
+                        // TODO show info
+                        break;
+                }
+
+                // TODO substractive color is not updated
+                RenderSettings.subtractiveShadowColor = realtimeShadowColor.colorValue;
             }
         }
 

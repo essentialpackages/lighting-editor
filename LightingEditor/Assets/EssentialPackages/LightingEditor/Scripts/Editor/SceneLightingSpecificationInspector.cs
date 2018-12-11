@@ -680,10 +680,12 @@ namespace EssentialPackages.LightingEditor.Editor
                 var m2 = t2.GetMethod("GetRenderSettings", BindingFlags.Static | BindingFlags.NonPublic);
                 var o2 = m2.Invoke(null, null) as UnityEngine.Object;
                 var so2 = new SerializedObject(o2);
-                
+                Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue);
                 so.FindProperty("m_LightmapEditorSettings.m_FinalGather").boolValue = finalGather.boolValue;
                 so.FindProperty("m_LightmapEditorSettings.m_FinalGatherRayCount").intValue = rayCount.intValue;
                 so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue = denoising.boolValue;
+                Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue);
+                so.ApplyModifiedProperties();
                 
                 switch (directionalMode.stringValue)
                 {
@@ -757,7 +759,6 @@ namespace EssentialPackages.LightingEditor.Editor
                 if (autoGenerate.boolValue)
                 {
                     Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
-                    
                 }
                 else
                 {
@@ -1097,8 +1098,10 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawCheckbox(finalGather);
                 if (finalGather.boolValue)
                 {
+                    EditorGUI.indentLevel++;
                     Inspector.DrawIntField(rayCount);
                     Inspector.DrawCheckbox(denoising);
+                    EditorGUI.indentLevel--;
                 }
             }
 

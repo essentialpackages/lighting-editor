@@ -25,7 +25,7 @@ namespace EssentialPackages.LightingEditor.Editor.Classes
         [SerializeField] private bool _compressLightmaps = true;
         [Tooltip("Only active when Baked Global Illumnination is active")]
         [SerializeField] private bool _ambientOcclusion = false;
-        [Tooltip("Only active when Baked Global Illumnination is active")]
+        [Tooltip("Only active when Baked Global Illumnination is active and Lightmapper is set to Enlighten")]
         [SerializeField] private bool _finalGather = false;
         
         [Tooltip("Only active when Ambient Occlusion is set to active")]

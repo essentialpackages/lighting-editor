@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using EssentialPackages.LightingEditor.Editor.Utils;
 using UnityEditor;
@@ -17,6 +18,7 @@ namespace EssentialPackages.LightingEditor.Editor
     {
         private SceneLightingSpecification TargetScript { get; set; }
         private bool ShowAdditionalInformation { get; set; }
+        private UnityEngine.Object defaultLightmapParameters;
 
         private void OnEnable()
         {
@@ -290,10 +292,13 @@ namespace EssentialPackages.LightingEditor.Editor
 
                 indirectIntensity.floatValue = Lightmapping.indirectOutputScale;
                 albedoBoost.floatValue = Lightmapping.bounceBoost;
-
+                
                 // TODO Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters").objectReferenceValue as LightmapParameters);
                 lightmapParameters.stringValue = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters")
                     .objectReferenceValue.ToString().Split()[0];
+                
+                defaultLightmapParameters = so.FindProperty("m_LightmapEditorSettings.m_LightmapParameters")
+                    .objectReferenceValue;
 
                 // Other Settings
                 fog.boolValue = RenderSettings.fog;
@@ -685,7 +690,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 so.FindProperty("m_LightmapEditorSettings.m_FinalGatherRayCount").intValue = rayCount.intValue;
                 so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue = denoising.boolValue;
                 Debug.Log(so.FindProperty("m_LightmapEditorSettings.m_FinalGatherFiltering").boolValue);
-                so.ApplyModifiedProperties();
+                //so.ApplyModifiedProperties();
                 
                 switch (directionalMode.stringValue)
                 {
@@ -708,21 +713,24 @@ namespace EssentialPackages.LightingEditor.Editor
                 switch (lightmapParameters.stringValue)
                 {
                     case "Default-Medium":
-                        // parameters.objectReferenceValue = ;
+                        //parameters.objectReferenceValue = "Default-Medium";
                         break;
                     case "Default-HighResolution":
-                        // parameters.objectReferenceValue = ;
+                        //parameters.objectReferenceValue = "Default-HighResolution";
                         break;
                     case "Default-LowResolution":
-                        // parameters.objectReferenceValue = ;
+                        //parameters.objectReferenceValue = "Default-LowResolution";
                         break;
                     case "Default-VeryLowResolution":
-                        // parameters.objectReferenceValue = ;
+                        //parameters.objectReferenceValue = "Default-VeryLowResolution";
                         break;
                     default:
                         // TODO show info
                         break;
                 }
+
+                parameters.objectReferenceValue = defaultLightmapParameters;
+                so.ApplyModifiedProperties();
                 
                 // Other Settings
                 RenderSettings.fog = fog.boolValue;

@@ -240,7 +240,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 directSamples.intValue = LightmapEditorSettings.directSampleCount;
                 indirectSamples.intValue = LightmapEditorSettings.indirectSampleCount;
                 var bou = new[] {"None", "1", "2", "3", "4"};
-                var modes = new[] {"Gaussian", "A-Trous", "None"};
+                var modes = PopupOptions.FilterType;
                 bounces.stringValue = bou[LightmapEditorSettings.bounces];
                 filtering.stringValue = LightmapEditorSettings.filteringMode.ToString();
                 directFilter.stringValue = modes[(int) LightmapEditorSettings.filterTypeDirect];
@@ -902,7 +902,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     addFieldsForCustom();
                     break;
             }
-
+            
             Inspector.DrawPopupGroup(compression, new[] {"Uncompressed", "Compressed", "Auto"});
             Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 1.0f);
             Inspector.DrawIntSlider(bounces, 1, 5);
@@ -928,7 +928,7 @@ namespace EssentialPackages.LightingEditor.Editor
             Inspector.DrawCheckbox(bakedGlobalIllumination);
 
             EditorGUI.BeginDisabledGroup(!bakedGlobalIllumination.boolValue);
-            Inspector.DrawPopupGroup(lightingMode, new[] {"Baked Indirect", "Subtractive", "Shadowmask"});
+            Inspector.DrawPopupGroup(lightingMode, PopupOptions.MixedLightingMode);
             if (lightingMode.stringValue == "Subtractive")
             {
                 Inspector.DrawPropertyField(realtimeShadowColor);
@@ -997,11 +997,11 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawIntField(directSamples);
                 Inspector.DrawIntField(indirectSamples);
                 Inspector.DrawPopupGroup(bounces, new[] {"None", "1", "2", "3", "4"});
-                Inspector.DrawPopupGroup(filtering, new[] {"None", "Auto", "Advanced"});
+                Inspector.DrawPopupGroup(filtering, PopupOptions.FilterMode);
 
                 Action drawAdvancedFilter = () =>
                 {
-                    Inspector.DrawPopupGroup(directFilter, new[] {"Gaussian", "A-Trous", "None"});
+                    Inspector.DrawPopupGroup(directFilter, PopupOptions.FilterType);
 
                     switch (directFilter.stringValue)
                     {
@@ -1019,7 +1019,7 @@ namespace EssentialPackages.LightingEditor.Editor
                             break;
                     }
 
-                    Inspector.DrawPopupGroup(indirectFilter, new[] {"Gaussian", "A-Trous", "None"});
+                    Inspector.DrawPopupGroup(indirectFilter, PopupOptions.FilterType);
 
                     switch (indirectFilter.stringValue)
                     {
@@ -1039,7 +1039,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
                     EditorGUI.BeginDisabledGroup(!ambientOcclusion.boolValue);
 
-                    Inspector.DrawPopupGroup(ambientOcclusionFilter, new[] {"Gaussian", "A-Trous", "None"});
+                    Inspector.DrawPopupGroup(ambientOcclusionFilter, PopupOptions.FilterType);
 
                     switch (ambientOcclusionFilter.stringValue)
                     {
@@ -1116,7 +1116,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUI.EndDisabledGroup();
 
             EditorGUI.BeginDisabledGroup(!realtimeEnabled && !bakedEnabled);
-            Inspector.DrawPopupGroup(directionalMode, new[] {"Non-Directional", "Directional"});
+            Inspector.DrawPopupGroup(directionalMode, PopupOptions.LightmapsMode);
             Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
             Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);
              

@@ -1122,9 +1122,7 @@ namespace EssentialPackages.LightingEditor.Editor
              
             var normalColor = GUI.color;
             GUI.color = Color.yellow;
-            EditorGUILayout.HelpBox("At the moment only lightmap parameters can be restored, which were active when" +
-                                    " saving the scene lighting settings. However, manual changes cannot be restored.",
-                                    MessageType.Info);
+            EditorGUILayout.HelpBox(HelpMessage.AboutLightmapParameters, MessageType.Info);
             GUI.color = normalColor;
             
             Inspector.DrawPopupGroup(
@@ -1217,7 +1215,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             var normalColor = GUI.color;
             GUI.color = Color.yellow;
-            EditorGUILayout.HelpBox("At the moment debug settings can neither be saved nor loaded", MessageType.Info);
+            EditorGUILayout.HelpBox(HelpMessage.AboutDebugSettings, MessageType.Info);
             GUI.color = normalColor;
 
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);

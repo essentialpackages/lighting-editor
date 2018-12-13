@@ -1,6 +1,6 @@
 ﻿namespace EssentialPackages.LightingEditor.Editor.Utils
 {
-    public class HelpMessage
+    public static class HelpMessage
     {
         public const string Summary =
             "This scriptable object enables developers to version specific lighting settings." +
@@ -19,5 +19,11 @@
             " accidentally changed when upgrading Unity to a version, having different" +
             " enumerations. But this does also mean, that developers should check all" +
             " instances previously created, when upgrading Unity/project.";
+
+        public const string AboutLightmapParameters = "At the moment only lightmap parameters can be restored, which" +
+                                                      " were active when saving the scene lighting settings. However," +
+                                                      " manual changes cannot be restored.";
+
+        public const string AboutDebugSettings = "At the moment debug settings can neither be saved nor loaded";
     }
 }

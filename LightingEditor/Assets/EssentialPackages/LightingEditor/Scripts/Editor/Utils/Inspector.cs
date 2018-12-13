@@ -120,5 +120,13 @@ namespace EssentialPackages.LightingEditor.Editor.Utils
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
+        
+        public static void HelpBox(string message, MessageType messageType, Color color)
+        {
+            var normalColor = GUI.color;
+            GUI.color = color;
+            EditorGUILayout.HelpBox(message, messageType);
+            GUI.color = normalColor;
+        }
     }
 }

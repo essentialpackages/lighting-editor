@@ -1120,10 +1120,7 @@ namespace EssentialPackages.LightingEditor.Editor
             Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
             Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);
              
-            var normalColor = GUI.color;
-            GUI.color = Color.yellow;
-            EditorGUILayout.HelpBox(HelpMessage.AboutLightmapParameters, MessageType.Info);
-            GUI.color = normalColor;
+            Layout.HelpBox(HelpMessage.AboutLightmapParameters, MessageType.Info, Color.yellow);
             
             Inspector.DrawPopupGroup(
                 lightmapParameters,
@@ -1213,10 +1210,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             BeginGroup(property.name, EditorStyles.boldLabel);
 
-            var normalColor = GUI.color;
-            GUI.color = Color.yellow;
-            EditorGUILayout.HelpBox(HelpMessage.AboutDebugSettings, MessageType.Info);
-            GUI.color = normalColor;
+            Layout.HelpBox(HelpMessage.AboutDebugSettings, MessageType.Info, Color.yellow);
 
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);
 

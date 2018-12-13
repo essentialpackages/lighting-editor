@@ -1119,6 +1119,14 @@ namespace EssentialPackages.LightingEditor.Editor
             Inspector.DrawPopupGroup(directionalMode, new[] {"Non-Directional", "Directional"});
             Inspector.DrawFloatSlider(indirectIntensity, 0.0f, 5.0f);
             Inspector.DrawFloatSlider(albedoBoost, 1.0f, 10.0f);
+             
+            var normalColor = GUI.color;
+            GUI.color = Color.yellow;
+            EditorGUILayout.HelpBox("At the moment only lightmap parameters can be restored, which were active when" +
+                                    " saving the scene lighting settings. However, manual changes cannot be restored.",
+                                    MessageType.Info);
+            GUI.color = normalColor;
+            
             Inspector.DrawPopupGroup(
                 lightmapParameters,
                 new[]

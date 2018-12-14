@@ -183,6 +183,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     RenderSettings.ambientEquatorColor;
                 environmentLighting.FindPropertyRelative("_groundColor").colorValue = RenderSettings.ambientGroundColor;
                 environmentLighting.FindPropertyRelative("_ambientColor").colorValue = RenderSettings.ambientLight;
+                // TODO missing Ambient Mode: Realtime vs. Baked
 
                 environmentReflections.FindPropertyRelative("_source").stringValue =
                     RenderSettings.defaultReflectionMode.ToString();
@@ -239,9 +240,8 @@ namespace EssentialPackages.LightingEditor.Editor
                 
                 directSamples.intValue = LightmapEditorSettings.directSampleCount;
                 indirectSamples.intValue = LightmapEditorSettings.indirectSampleCount;
-                var bou = new[] {"None", "1", "2", "3", "4"};
                 var modes = PopupOptions.FilterType;
-                bounces.stringValue = bou[LightmapEditorSettings.bounces];
+                bounces.stringValue = PopupOptions.Bounces[LightmapEditorSettings.bounces];
                 filtering.stringValue = LightmapEditorSettings.filteringMode.ToString();
                 directFilter.stringValue = modes[(int) LightmapEditorSettings.filterTypeDirect];
                 directRadius.intValue = LightmapEditorSettings.filteringGaussRadiusDirect;
@@ -832,7 +832,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             Action colorSelected = () => { Inspector.DrawPropertyField(ambientColor); };
 
-            Inspector.DrawPopupGroup(source, new[] {"Skybox", "Gradient", "Color"});
+            Inspector.DrawPopupGroup(source, PopupOptions.AmbientMode);
 
             switch (source.stringValue)
             {
@@ -882,12 +882,12 @@ namespace EssentialPackages.LightingEditor.Editor
 
             Action addFieldsForSkyboxNo2 = () =>
             {
-                Inspector.DrawPopupGroup(resolution, new[] {"16", "32", "64", "128", "256", "512", "1024", "2048"});
+                Inspector.DrawPopupGroup(resolution, PopupOptions.ReflectionsResolution);
             };
 
             Action addFieldsForCustom = () => { Inspector.DrawPropertyField(cubemap); };
 
-            Inspector.DrawPopupGroup(source, new[] {"Skybox", "Custom"});
+            Inspector.DrawPopupGroup(source, PopupOptions.ReflectionsMode);
 
             switch (source.stringValue)
             {
@@ -903,7 +903,7 @@ namespace EssentialPackages.LightingEditor.Editor
                     break;
             }
             
-            Inspector.DrawPopupGroup(compression, new[] {"Uncompressed", "Compressed", "Auto"});
+            Inspector.DrawPopupGroup(compression, PopupOptions.ReflectionCubemapCompression);
             Inspector.DrawFloatSlider(intensityMultiplier, 0.0f, 1.0f);
             Inspector.DrawIntSlider(bounces, 1, 5);
         }
@@ -996,7 +996,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 Inspector.DrawCheckbox(prioritizeView);
                 Inspector.DrawIntField(directSamples);
                 Inspector.DrawIntField(indirectSamples);
-                Inspector.DrawPopupGroup(bounces, new[] {"None", "1", "2", "3", "4"});
+                Inspector.DrawPopupGroup(bounces, PopupOptions.Bounces);
                 Inspector.DrawPopupGroup(filtering, PopupOptions.FilterMode);
 
                 Action drawAdvancedFilter = () =>
@@ -1087,7 +1087,7 @@ namespace EssentialPackages.LightingEditor.Editor
             EditorGUI.BeginDisabledGroup(!bakedEnabled);
             Inspector.DrawFloatField(lightmapResolution);
             Inspector.DrawIntField(lightmapPadding);
-            Inspector.DrawPopupGroup(lightmapSize, new[] {"32", "64", "128", "256", "512", "1024", "2048", "4096"});
+            Inspector.DrawPopupGroup(lightmapSize, PopupOptions.LightmapAtlasSize);
             Inspector.DrawCheckbox(compressLightmaps);
 
             Inspector.DrawCheckbox(ambientOcclusion);
@@ -1166,10 +1166,7 @@ namespace EssentialPackages.LightingEditor.Editor
                 EditorGUI.indentLevel++;
                 Inspector.DrawPropertyField(color);
 
-                Inspector.DrawPopupGroup(
-                    mode,
-                    new[] {"Linear", "Exponential", "Exponential Squared"}
-                );
+                Inspector.DrawPopupGroup(mode, PopupOptions.FogMode);
 
                 switch (mode.stringValue)
                 {
@@ -1214,11 +1211,7 @@ namespace EssentialPackages.LightingEditor.Editor
 
             BeginGroup(lightProbeVisualization.name, EditorStyles.label);
 
-            Inspector.DrawPopupGroup(
-                dropdownMenu,
-                new[] {"Only Probes Used By Selection", "All Probes No Cells", "All Probes With Cells", "None"},
-                false
-            );
+            Inspector.DrawPopupGroup(dropdownMenu, PopupOptions.LightProbesMode, false);
             Inspector.DrawCheckbox(displayWeights);
             Inspector.DrawCheckbox(displayOcclusion);
 
